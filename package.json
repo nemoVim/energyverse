@@ -1,0 +1,19 @@
+{
+  "name": "energyverse",
+  "version": "1.0.0",
+  "description": "energyverse project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemovim/energyverse.git"
+  },
+  "author": "nemovim",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/nemovim/energyverse/issues"
+  },
+  "homepage": "https://github.com/nemovim/energyverse#readme"
+}
