@@ -1,4 +1,6 @@
 class map {
+    #moveList = new Array(6);
+
     constructor(size) {
         this.size = size;
         this.#setMap();
@@ -14,8 +16,8 @@ class map {
         this.map[size] = new Array(2 * size - 1);
     }
 
+
     #setMove() {
-        this.#moveList = new Array(6);
 
         this.#moveList[0] = (pos) => {
             let i, j = pos;

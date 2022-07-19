@@ -1,0 +1,25 @@
+p {
+    word-break: keep-all;
+    white-space: break-spaces;
+}
+button {
+    font-size: 1rem;
+    margin: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0;
+    border: solid 0.1rem black;
+    background-color: rgb(245, 245, 245);
+}
+
+#teamsDiv {
+    display: flex;
+}
+
+.teamDiv {
+    box-sizing: border-box;
+    padding: .5rem;
+}
+
+.turn {
+    border: solid black .1rem;
+}

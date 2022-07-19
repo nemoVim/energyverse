@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nemovim/energyverse/issues"
   },
-  "homepage": "https://github.com/nemovim/energyverse#readme"
+  "homepage": "https://github.com/nemovim/energyverse#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
 }
