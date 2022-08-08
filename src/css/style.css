@@ -1,14 +1,28 @@
+html {
+    font-size: 10px;
+}
+
+h4 {
+    font-size: 2rem;
+}
+
 p {
+    font-size: 1.4rem;
     word-break: keep-all;
     white-space: break-spaces;
 }
+
 button {
-    font-size: 1rem;
+    font-size: 1.4rem;
     margin: 0.5rem;
     padding: 0.3rem 0.5rem;
     border-radius: 0;
     border: solid 0.1rem black;
     background-color: rgb(245, 245, 245);
+}
+
+.hidden {
+    display: none !important;
 }
 
 #teamsDiv {
@@ -22,4 +36,49 @@ button {
 
 .turn {
     border: solid black .1rem;
+}
+
+#worldDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.05);
+    width: 100vw;
+    height: 100vh;
+}
+
+#closeWorld {
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+#tilesDiv {
+    position: relative;
+}
+
+.tileDiv {
+    position: absolute;
+}
+
+.biomeImg {
+    width: 2.7rem;
+}
+
+.entityImg {
+    width: 1.8rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+}
+
+.pointImg {
+    width: 3rem;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
