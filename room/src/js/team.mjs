@@ -1,5 +1,8 @@
+import { Nickname } from './nickname.mjs';
+
 export class Team {
     #manager;
+    #socket;
     #name;
     #energy;
     #score;
@@ -9,13 +12,18 @@ export class Team {
     #buildings = [];
     #units = [];
 
-    constructor(_manager, _name, _energy) {
+    constructor(_manager, _socket, _energy) {
         this.#manager = _manager;
-        this.#name = _name;
+        this.#socket = _socket;
+        this.#name = new Nickname(_socket);
         this.#energy = _energy;
         this.#score = _energy;
 
         this.#teamUI = new TeamUI(_name, _energy, this.#score);
+    }
+
+    getNickname() {
+        return this.#name.getNickname();
     }
 
     modifyEnergy(delta) {

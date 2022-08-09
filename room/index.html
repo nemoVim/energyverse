@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Energyverse Project</title>
+
+        <link rel="stylesheet" href="/src/css/style.css">
+        <link rel="stylesheet" href="/room/src/css/style.css">
+    </head>
+    <body>
+        <!-- <a href="https://www.flaticon.com/kr/free-icons/" title="육각형 아이콘"
+            >육각형 아이콘 제작자: Pixel perfect - Flaticon</a
+        > -->
+        <h1 id="roomTitle"></h1>
+
+        <button id="leaveRoomBtn">방 나가기</button>
+
+        <p>접속자 목록</p>
+        <div id="socketListDiv"></div>
+
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script type="module" src="/game/src/js/utils.mjs"></script>
+        <script type="module" src="/game/src/js/move.mjs"></script>
+        <script type="module" src="/game/src/js/biomes.mjs"></script>
+        <script type="module" src="/game/src/js/entity.mjs"></script>
+        <script type="module" src="/game/src/js/powerPlants.mjs"></script>
+        <script type="module" src="/game/src/js/buildings.mjs"></script>
+        <script type="module" src="/game/src/js/units.mjs"></script>
+        <script type="module" src="/game/src/js/tileMap.mjs"></script>
+        <script type="module" src="/game/src/js/world.mjs"></script>
+        <script type="module" src="/game/src/js/team.mjs"></script>
+        <script type="module" src="/game/src/js/manager.mjs"></script>
+        <script type="module" src="/game/src/js/mainGame.js"></script>
+        <script type="module" src="/room/src/js/functions.js"></script>
+    </body>
+</html>

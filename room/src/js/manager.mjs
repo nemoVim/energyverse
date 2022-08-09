@@ -1,7 +1,5 @@
-import {Entity} from './entity.mjs';
 import {Team} from './team.mjs';
-import {World} from './world.mjs';
-import {PowerPlants} from './powerPlants.mjs';
+import {World} from '../../../game/src/js/world.mjs';
 
 export class Manager {
     static initEnergy = 50;
