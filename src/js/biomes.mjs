@@ -58,8 +58,8 @@ export class Fuel extends Biome {
         return this.#amount;
     }
 
-    use() {
-        this.#amount -= 1;
+    modifyAmount(delta) {
+        this.#amount += delta;
     }
 }
 

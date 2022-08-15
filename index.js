@@ -17,19 +17,15 @@ otSpace.on('connection', socket => {
 
     playerCnt += 1;
 
+    let roomId;
+
     basicSetting(socket);
 
     socket.on('setNickName', nickName => {
         nickNameMap.set(socket.id, nickName);
-        socket.emit('doneNickName');
     });
 
-    socket.on('createRoom', roomId => {
-        adminMap.set(roomId, getNickName(socket));
-        socket.emit('doneCreate');
-    });
-    
-    socket.on('leaveRoom', roomId => {
+    socket.on('leaveRoom', () => {
         socket.leave(roomId);
         if (checkAdmin(roomId, socket)) {
             // explode room!
@@ -40,23 +36,50 @@ otSpace.on('connection', socket => {
         setIntervalGetRoomList(socket);
     });
 
-    socket.on('joinRoom', roomId => {
+    socket.on('joinRoom', _roomId => {
+
+        roomId = _roomId;
+        
         socket.join(roomId);
+
+        if (getSocketList(socket, roomId).length === 1) {
+            // This socket is the first member of the room. => It is admin.
+            adminMap.set(roomId, getNickName(socket));
+        }
+
         clearInterval(socket.interval);
-        getSocketList(socket, roomId);
+        socket.emit('socketList', JSON.stringify(getSocketList(socket, roomId)));
         setIntervalGetSocketList(socket, roomId);
-        socket.emit('doneJoin');
+
+        onBroadcast(socket, roomId, 'init');
+        onBroadcast(socket, roomId, 'build');
+        onBroadcast(socket, roomId, 'destroy');
+        onBroadcast(socket, roomId, 'refresh');
+        onBroadcast(socket, roomId, 'thermal');
+        onBroadcast(socket, roomId, 'modify');
+        onBroadcast(socket, roomId, 'research');
+        onBroadcast(socket, roomId, 'settle');
+
     });
 
-    socket.on('checkAdmin', (roomId) => {
+    socket.on('checkAdmin', () => {
         socket.emit('admin', checkAdmin(roomId, socket));
     });
+
+
 
     socket.on('disconnect', () => {
         nickNameMap.delete(socket.id);
         playerCnt -= 1;
     });
 });
+
+function onBroadcast(socket, roomId, name) {
+    socket.on(name, config => {
+        console.log(name);
+        socket.broadcast.to(roomId).emit(name, config);
+    });
+}
 
 function getNickName(socket) {
     return nickNameMap.get(socket.id);
@@ -108,12 +131,12 @@ function getSocketList(socket, roomId) {
     socketList = socketList.map(id => {
         return nickNameMap.get(id);
     });
-    socket.emit('socketList', JSON.stringify(socketList));
+    return socketList;
 }
 
 function setIntervalGetSocketList(socket, roomId) {
     socket.interval = setInterval(() => {
-        getSocketList(socket, roomId);
+        socket.emit('socketList', JSON.stringify(getSocketList(socket, roomId)));
         getPlayerCnt();
     }, 1000);
 

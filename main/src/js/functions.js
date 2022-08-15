@@ -8,7 +8,7 @@
         const createRoomBtn = document.getElementById('createRoomBtn');
         createRoomBtn.addEventListener('click', () => {
             const roomId = Math.floor(Math.random() * 100000);
-            location.href = '/room/' + roomId;
+            joinRoom(roomId);
         });
     }
 
@@ -17,6 +17,10 @@
             let roomList = new Array(JSON.parse(msg))[0];
             refreshRoomListDiv(roomList);
         });
+    }
+
+    function joinRoom(roomId) {
+        location.href = '/room/' + roomId;
     }
 
     function refreshRoomListDiv(roomList) {

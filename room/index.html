@@ -6,34 +6,106 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Energyverse Project</title>
 
-        <link rel="stylesheet" href="/src/css/style.css">
-        <link rel="stylesheet" href="/room/src/css/style.css">
+        <link rel="stylesheet" href="/src/css/style.css" />
+        <link rel="stylesheet" href="/src/css/game.css" />
+        <link rel="stylesheet" href="/room/src/css/style.css" />
     </head>
     <body>
         <!-- <a href="https://www.flaticon.com/kr/free-icons/" title="육각형 아이콘"
             >육각형 아이콘 제작자: Pixel perfect - Flaticon</a
         > -->
-        <h1 id="roomTitle"></h1>
 
-        <button id="leaveRoomBtn">방 나가기</button>
+        <div id="roomDiv">
+            <h1 id="roomTitle"></h1>
 
-        <p>접속자 목록</p>
-        <div id="socketListDiv"></div>
+            <button id="leaveRoomBtn">방 나가기</button>
+
+            <p>접속자 목록</p>
+            <div id="socketListDiv"></div>
+
+            <div id="roomController" class="hidden">
+                <button id="startBtn">게임 시작</button>
+            </div>
+        </div>
+
+        <div id="gameDiv" class="hidden">
+            <div id="teamDiv" class="hidden">
+                <p id="predictedP"></p>
+                <p id="energyP"></p>
+                <p id="scoreP"></p>
+                <button id="mapBtn">맵 보기/끄기</button>
+                <div id="mapDiv" class="hidden"></div>
+                <button id="skillBtn">기술트리 보기/끄기</button>
+                <div id="skillDiv" class="hidden">
+                    <button id="windSkillBtn">풍력 기술트리</button>
+                    <button id="solarSkillBtn">태양광 기술트리</button>
+                    <button id="atomicSkillBtn">원자력 기술트리</button>
+                </div>
+            </div>
+
+            <div id="adminDiv" class="hidden">
+                <div id="actionDiv">
+
+                    <button id="buildBtn">건설</button>
+                    <div id="buildDiv" class="hidden">
+                        <button id="factoryBtn" class="hidden">공장</button>
+                        <button id="thermalPowerBtn" class="hidden">화력 발전소</button>
+                        <button id="windPowerBtn" class="hidden">풍력 발전소</button>
+                        <button id="solarPowerBtn" class="hidden">태양광 발전소</button>
+                        <button id="atomicPowerBtn" class="hidden">원자력 발전소</button>
+                        <button id="windScoreBtn" class="hidden">풍력 점수 건물</button>
+                        <button id="solarScoreBtn" class="hidden">태양광 점수 건물</button>
+                        <button id="atomicScoreBtn" class="hidden">원자력 점수 건물</button>
+                    </div>
+
+                    <button id="produceBtn">생산</button>
+                    <div id="produceDiv" class="hidden">
+                        <button id="probeBtn" class="hidden">일꾼</button>
+                        <button id="windUnitBtn" class="hidden">풍력 유닛</button>
+                        <button id="solarUnitBtn" class="hidden">태양광 유닛</button>
+                        <button id="atomicUnitBtn" class="hidden">원자력 유닛</button>
+                        <button id="missileBtn" class="hidden">미사일</button>
+                    </div>
+
+                    <button id="destroyBtn">파괴</button>
+                    <div id="destroyDiv"></div>
+
+                    <button id="researchBtn">연구</button>
+                    <div id="researchDiv"></div>
+
+                    <button id="changeBiomeBtn">지형 변형</button>
+                    <div id="changeBiomDiv" class="hidden">
+                        <button id="upBtn" class="hidden">융기</button>
+                        <button id="downBtn" class="hidden">침강</button>
+                    </div>
+                </div>
+
+                <div id="functionDiv">
+                    <button id="modifyEnergyBtn">현재 팀의 에너지 변경</button>
+                    <button id="modifyScoreBtn">현재 팀의 점수 변경</button>
+                    <button id="cancelBtn">가장 최근 행동 취소</button>
+                    <button id="previousBtn">이전 턴</button>
+                    <button id="nextBtn">다음 턴</button>
+                    <button id="settleBtn">정산</button>
+                </div>
+            </div>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
 
-        <script type="module" src="/game/src/js/utils.mjs"></script>
-        <script type="module" src="/game/src/js/move.mjs"></script>
-        <script type="module" src="/game/src/js/biomes.mjs"></script>
-        <script type="module" src="/game/src/js/entity.mjs"></script>
-        <script type="module" src="/game/src/js/powerPlants.mjs"></script>
-        <script type="module" src="/game/src/js/buildings.mjs"></script>
-        <script type="module" src="/game/src/js/units.mjs"></script>
-        <script type="module" src="/game/src/js/tileMap.mjs"></script>
-        <script type="module" src="/game/src/js/world.mjs"></script>
-        <script type="module" src="/game/src/js/team.mjs"></script>
-        <script type="module" src="/game/src/js/manager.mjs"></script>
-        <script type="module" src="/game/src/js/mainGame.js"></script>
+        <script type="module" src="/src/js/utils.mjs"></script>
+        <script type="module" src="/src/js/move.mjs"></script>
+        <script type="module" src="/src/js/biomes.mjs"></script>
+        <script type="module" src="/src/js/entity.mjs"></script>
+        <script type="module" src="/src/js/buildings.mjs"></script>
+        <script type="module" src="/src/js/skills.mjs"></script>
+        <script type="module" src="/src/js/skillTreeUI.mjs"></script>
+        <script type="module" src="/src/js/status.mjs"></script>
+        <script type="module" src="/src/js/tileMap.mjs"></script>
+        <script type="module" src="/src/js/world.mjs"></script>
+        <script type="module" src="/room/src/js/dummyTeam.mjs"></script>
+        <script type="module" src="/room/src/js/adminManager.mjs"></script>
+        <script type="module" src="/room/src/js/teamManager.mjs"></script>
         <script type="module" src="/room/src/js/functions.js"></script>
     </body>
 </html>

@@ -1,32 +1,51 @@
-import {Manager} from './manager.mjs';
-import {Team} from './team.mjs';
+import { AdminManager } from './adminManager.mjs';
+import {TeamManager} from './teamManager.mjs';
 
 (function () {
-    addEventLeaveRoomBtn();
-
-    const body = document.getElementsByTagName('body')[0];
-
-    let teamCnt = Number(prompt('팀 수?'));
-    let manager = new Manager(teamCnt);
-
-    body.append(manager.getUI().getDiv());
-
-    manager.start();
     const socket = io.connect('/ot');
 
-    const team = new Team();
-    team.init();
-    let isAdmin;
+    addEventLeaveRoomBtn();
 
-    setConfig();
+    setNickname();
+    joinRoom();
+    checkAdmin();
+    reloadSocketList();
 
-    async function setConfig() {
-        await setNickName();
-        await joinRoom();
-        checkAdmin();
+    var nickname = '';
+
+    function setNickname() {
+        nickname = prompt('name?');
+        socket.emit('setNickName', nickname);
     }
 
-    reloadSocketList();
+    // function checkNickname() {
+    //     const cookie = document.cookie;
+    //     if (cookie === '') {
+    //         return false;
+    //     } else {
+    //         return true;
+    //     }
+    // }
+
+    // function setNickname() {
+    //     let nickname = '';
+
+    //     if (!checkNickname()) {
+    //         while (nickname.match(/[가-힣]{2,4}/) === null) {
+    //             nickname = prompt('이름을 입력하세요.');
+    //         }
+    //         document.cookie = nickname;
+    //     } else {
+    //         nickname = document.cookie;
+    //     }
+
+    //     socket.emit('setNickName', nickname);
+    // }
+
+    function getNickname() {
+        // return document.cookie;
+        return nickname;
+    }
 
     function addEventLeaveRoomBtn() {
         const leaveRoomBtn = document.getElementById('leaveRoomBtn');
@@ -35,14 +54,9 @@ import {Team} from './team.mjs';
         });
     }
 
-    function createRoom() {
-        socket.emit('createRoom', roomId);
-        return roomId;
-    }
     function getCookie() {
         return document.cookie;
     }
-
 
     function getRoomId() {
         const roomId = Number(location.href.split('/').pop());
@@ -50,31 +64,37 @@ import {Team} from './team.mjs';
     }
 
     function leaveRoom() {
-        socket.emit('leaveRoom', getRoomId());
+        socket.emit('leaveRoom');
         location.href = '/main';
     }
 
     function joinRoom() {
-        return new Promise((resolve, reject) => {
-            socket.emit('joinRoom', getRoomId(), getCookie());
-            socket.on('doneJoin', () => {
-                resolve();
-            });
-        });
+        socket.emit('joinRoom', getRoomId(), getNickname());
     }
 
     function checkAdmin() {
-        socket.emit('checkAdmin', getRoomId());
-        socket.on('admin', (_isAdmin) => {
-            isAdmin = _isAdmin;
+        socket.emit('checkAdmin');
+        socket.on('admin', (isAdmin) => {
             console.log(isAdmin);
+            init(isAdmin)
         });
+    }
+
+    function init(isAdmin) {
+
+        let manager;
+
+        if (isAdmin) {
+            manager = new AdminManager(socket);
+            document.getElementById('roomController').classList.remove('hidden');
+        } else {
+            manager = new TeamManager(socket, getNickname());
+        }
     }
 
     function reloadSocketList() {
         socket.on('socketList', (msg) => {
             let socketList = new Array(JSON.parse(msg))[0];
-            console.log(socketList);
             refreshSocketListDiv(socketList);
         });
     }

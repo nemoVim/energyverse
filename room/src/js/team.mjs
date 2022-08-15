@@ -1,34 +1,56 @@
-import { Nickname } from './nickname.mjs';
+import { Skills } from '../../../src/js/skills.mjs';
+import { SkillTreeUI } from '../../../src/js/skillTreeUI.mjs';
+import { Status } from '../../../src/js/status.mjs';
 
 export class Team {
-    #manager;
+
+    static initEnergy = 50;
+    static turnEnergy = 10;
+    static initSkills = [0, 1, 2];
+
     #socket;
     #name;
     #energy;
     #score;
     #teamUI;
 
-    #powerPlants = [];
     #buildings = [];
-    #units = [];
 
-    constructor(_manager, _socket, _energy) {
-        this.#manager = _manager;
+    #status;
+
+    #skills;
+
+    #researching = [];
+
+    #skillTreeUI;
+
+    constructor(_socket, _name) {
         this.#socket = _socket;
-        this.#name = new Nickname(_socket);
-        this.#energy = _energy;
-        this.#score = _energy;
+        this.#name = _name;
+        this.#energy = Team.initEnergy;
+        this.#score = Team.initEnergy;
 
-        this.#teamUI = new TeamUI(_name, _energy, this.#score);
+        this.#status = new Status();
+        this.#skills = Team.initSkills;
+
+        this.#skillTreeUI = new SkillTreeUI();
+
+        for (let index of this.#skills) {
+            Skills[index].useAbility(this.#status);
+        }
+
+        this.#teamUI = new TeamUI(_name, Team.initEnergy, this.#score);
+
+        this.#teamUI.refresh(this.getPredictedValue(), this.#energy, this.#score);
     }
 
     getNickname() {
-        return this.#name.getNickname();
+        return this.#name;
     }
 
     modifyEnergy(delta) {
         this.#energy += delta;
-        this.#teamUI.refresh(this.getPredictedValue(), this.#energy, this.#score);
+        this.refresh();
     }
 
     getEnergy() {
@@ -38,46 +60,99 @@ export class Team {
     modifyScore(delta) {
         this.#score += delta;
         this.#score = this.#score.toFixed(1);
-        this.#teamUI.refresh(this.getPredictedValue(), this.#energy, this.#score);
+        this.refresh();
     }
 
     getScore() {
         return this.#score;
     }
 
-    buildPowerPlant(pos, powerPlant) {
-        let entity = new powerPlant(pos, this, this.#manager.getWorld(), 0);
-        this.#manager.getWorld().setEntity(pos, entity);
-        this.#powerPlants.push(entity);
-        console.log(entity.getCost());
-        this.modifyEnergy(-entity.getCost());
+    getStatus() {
+        return this.#status;
     }
 
-    buildBuilding(building) {
+    getSkills() {
+        return this.#skills;
+    }
+
+    // ----------------------------------------------
+
+    refresh() {
+        this.#socket.emit('refresh', [this.#name, this.#energy, this.#score]);
+        this.#teamUI.refresh(this.getPredictedValue(), this.#energy, this.#score);
+    }
+
+    // --------------------------------------------
+
+    build(building) {
         this.#buildings.push(building);
-        this.modifyEnergy(-building.getCost());
+        if (this.#status.hasProbe(32)) {
+            this.modifyEnergy(-building.getCost()+5);
+        } else {
+            this.modifyEnergy(-building.getCost());
+        }
+    }
+
+    produce(unit) {
+        this.#units.push(unit);
+        if (this.#status.hasFactory(2) && unit.getType() === 'probe') {
+            this.modifyEnergy(-unit.getCost()+3);
+        } else if (this.#status.hasFactory(4) && unit.getType() !== 'probe') {
+            this.modifyEnergy(-unit.getCost()+3);
+        } else {
+            this.modifyEnergy(-unit.getCost());
+        }
     }
 
     destroy(entity) {
-        let index = this.#powerPlants.indexOf(entity);
-        this.#powerPlants.splice(index, 1);
+        this.modifyScore(+entity.getCost()/2);
+    }
+
+    destroyed(entity) {
+
+        if (entity instanceof Unit) {
+            const index = this.#units.indexOf(entity);
+            this.#units.splice(index, 1);
+        } else if (entity instanceof Building) {
+            const index = this.#buildings.indexOf(entity);
+            this.#buildings.splice(index, 1);
+        }
+
         this.modifyScore(-entity.getCost()/2);
     }
 
+    research(index) {
+        const skill = Skills[index];
+        this.#skills.push(skill.getSerial());
+        this.modifyEnergy(-skill.getCost());
+    }
+
+    // ----------------------------------------------
+
     getPredictedValue() {
-        return this.#powerPlants.reduce((prev, plant) => {
+        return this.#buildings.reduce((prev, plant) => {
+            if (!(plant instanceof PowerPlant)) return prev;
             return prev + Number(plant.getEarn());
         }, 0);
     }
 
-    settle() {
-        this.#powerPlants.forEach((plant) => {
+    learn() {
+        this.#researching.forEach(index => {
+            Skills[index].useAbility(this.#status);
+        });
+    }
+
+    generate() {
+        this.#buildings.forEach((plant) => {
+
+            if (!(plant instanceof PowerPlant)) return;
 
             let generatedEnergy = Number(plant.generate());
-            this.modifyEnergy(Number(plant.generate()));
+
+            this.modifyEnergy(generatedEnergy);
 
             if (plant.getType() === 'thermal') {
-                this.#manager.getWorld().increaseTemp();
+                this.#socket.emit('thermal', plant.getFuel().getPos());
                 this.modifyScore(generatedEnergy/2);
             } else {
                 this.modifyScore(generatedEnergy);
@@ -86,33 +161,29 @@ export class Team {
         });
     }
 
-    getUI() {
-        return this.#teamUI;
+    settle() {
+
+        this.generate();
+        this.learn();
+
+        this.modifyEnergy(Team.turnEnergy);
+        this.modifyScore(Team.turnEnergy);
+
+        this.#socket.emit('doneSettle');
     }
 }
 
 class TeamUI {
 
-    #teamDiv;
-
-    #nameTitle;
     #predictedP;
     #energyP;
     #scoreP;
 
     constructor(_name, energy, score) {
-        this.#teamDiv = document.createElement('div');
-        this.#teamDiv.classList.add('teamDiv');
 
-        this.#nameTitle = document.createElement('h1');
-        this.#predictedP = document.createElement('p');
-        this.#energyP = document.createElement('p');
-        this.#scoreP = document.createElement('p');
-
-        this.#teamDiv.append(this.#nameTitle);
-        this.#teamDiv.append(this.#predictedP);
-        this.#teamDiv.append(this.#energyP);
-        this.#teamDiv.append(this.#scoreP);
+        this.#predictedP = document.getElementById('predictedP');
+        this.#energyP = document.getElementById('energyP');
+        this.#scoreP = document.getElementById('scoreP');
 
         this.refresh(0, energy, score);
     }
@@ -121,9 +192,5 @@ class TeamUI {
         this.#predictedP.innerText = `발전량: ${predicted}`;
         this.#energyP.innerText = `에너지: ${energy}`;
         this.#scoreP.innerText = `점수: ${score}`;
-    }
-
-    getDiv() {
-        return this.#teamDiv;
     }
 }
