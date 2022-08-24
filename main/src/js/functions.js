@@ -1,16 +1,17 @@
 (function () {
     const socket = io.connect('/ot');
 
-    addEventCreateRoomBtn();
+    // addEventCreateRoomBtn();
     reloadRoomList();
 
-    function addEventCreateRoomBtn() {
-        const createRoomBtn = document.getElementById('createRoomBtn');
-        createRoomBtn.addEventListener('click', () => {
-            const roomId = Math.floor(Math.random() * 100000);
-            joinRoom(roomId);
-        });
-    }
+    // function addEventCreateRoomBtn() {
+    //     const createRoomBtn = document.getElementById('createRoomBtn');
+    //     createRoomBtn.addEventListener('click', () => {
+    //         // const roomId = Math.floor(Math.random() * 100000);
+    //         const roomId = prompt('room name?');
+    //         joinRoom(roomId);
+    //     });
+    // }
 
     function reloadRoomList() {
         socket.on('roomList', (msg) => {

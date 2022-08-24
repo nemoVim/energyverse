@@ -22,6 +22,7 @@ export class Status {
 
     upgradeProbe(upgrade) {
         this.#probe |= upgrade;
+        return this;
     }
 
     hasFactory(upgrade) {
@@ -30,6 +31,7 @@ export class Status {
 
     upgradeFactory(upgrade) {
         this.#factory |= upgrade;
+        return this;
     }
 
     hasThermalPower(upgrade) {
@@ -38,6 +40,7 @@ export class Status {
 
     upgradeThermalPower(upgrade) {
         this.#thermalPower |= upgrade;
+        return this;
     }
 
     hasWindPower(upgrade) {
@@ -46,6 +49,7 @@ export class Status {
 
     upgradeWindPower(upgrade) {
         this.#windPower |= upgrade;
+        return this;
     }
 
     hasSolarPower(upgrade) {
@@ -54,6 +58,7 @@ export class Status {
 
     upgradeSolarPower(upgrade) {
         this.#solarPower |= upgrade;
+        return this;
     }
 
     hasAtomicPower(upgrade) {
@@ -62,6 +67,7 @@ export class Status {
 
     upgradeAtomicPower(upgrade) {
         this.#atomicPower |= upgrade;
+        return this;
     }
 
     hasWindUnit(upgrade) {
@@ -70,6 +76,7 @@ export class Status {
 
     upgradeWindUnit(upgrade) {
         this.#windUnit |= upgrade;
+        return this;
     }
 
     hasSolarUnit(upgrade) {
@@ -78,6 +85,7 @@ export class Status {
 
     upgradeSolarUnit(upgrade) {
         this.#solarUnit |= upgrade;
+        return this;
     }
 
     hasAtomicUnit(upgrade) {
@@ -86,6 +94,7 @@ export class Status {
 
     upgradeAtomicUnit(upgrade) {
         this.#atomicUnit |= upgrade;
+        return this;
     }
 
     hasWindScore(upgrade) {
@@ -94,6 +103,7 @@ export class Status {
 
     upgradeWindScore(upgrade) {
         this.#windScore |= upgrade;
+        return this;
     }
 
     hasSolarScore(upgrade) {
@@ -102,6 +112,7 @@ export class Status {
 
     upgradeSolarScore(upgrade) {
         this.#solarScore |= upgrade;
+        return this;
     }
 
     hasAtomicScore(upgrade) {
@@ -110,6 +121,7 @@ export class Status {
 
     upgradeAtomicScore(upgrade) {
         this.#atomicScore |= upgrade;
+        return this;
     }
 
     hasMissile(upgrade) {
@@ -118,6 +130,7 @@ export class Status {
 
     upgradeMissile(upgrade) {
         this.#missile |= upgrade;
+        return this;
     }
 
     hasUnits(upgrade) {
@@ -126,5 +139,6 @@ export class Status {
 
     upgradeUnits(upgrade) {
         this.#units |= upgrade;
+        return this;
     }
 }

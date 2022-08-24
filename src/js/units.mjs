@@ -9,21 +9,21 @@ export class Unit extends Entity {
 export class Probe extends Unit {
     static cost = 10;
     static type = 'probe';
+    static name = '일꾼';
 
     constructor(team) {
         super(
             Probe,
             null,
-            this.moveFunction(pos),
-            this.actFunction(pos),
             team
         );
     }
 }
 
 export class WindUnit extends Unit {
-    static cost = 20;
+    static cost = 15;
     static type = 'windUnit';
+    static name = '풍력 공격 유닛';
 
     constructor(team) {
         super(
@@ -35,8 +35,9 @@ export class WindUnit extends Unit {
 }
 
 export class SolarUnit extends Unit {
-    static cost = 20;
+    static cost = 15;
     static type = 'solarUnit';
+    static name = '태양광 공격 유닛';
 
     constructor(team) {
         super(
@@ -47,8 +48,9 @@ export class SolarUnit extends Unit {
     }
 }
 export class AtomicUnit extends Unit {
-    static cost = 20;
+    static cost = 15;
     static type = 'atomicUnit';
+    static name = '원자력 공격 유닛';
 
     constructor(team) {
         super(
@@ -59,9 +61,24 @@ export class AtomicUnit extends Unit {
     }
 }
 
+export class Missile extends Unit {
+    static cost = 15;
+    static type = 'missile';
+    static name = '미사일';
+
+    constructor(team) {
+        super(
+            Missile,
+            null,
+            team,
+        );
+    }
+}
+
 export const Units = {
-    PROBE: Probe,
-    WIND_UNIT: WindUnit,
-    SOLAR_UNIT: SolarUnit,
-    ATOMIC_UNIT: AtomicUnit,
+    probe: Probe,
+    windUnit: WindUnit,
+    solarUnit: SolarUnit,
+    atomicUnit: AtomicUnit,
+    missile: Missile,
 }

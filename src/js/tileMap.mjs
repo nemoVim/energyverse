@@ -5,6 +5,8 @@ export class TileMap {
     #tileMapArray;
     #mapSize;
 
+    #worldUI;
+
     constructor(_mapSize, biomeIndex, biomeList) {
         this.#mapSize = _mapSize;
         this.#tileMapArray = Utils.makeMapArray(_mapSize);
@@ -12,11 +14,39 @@ export class TileMap {
     }
 
     setTile(pos, tile) {
-        this.#tileMapArray[pos[0]][pos[1]] = tile;
+        if (pos[0] < this.#mapSize) {
+            this.#tileMapArray[pos[0]][pos[1]] = tile;
+        } else {
+            this.#tileMapArray[pos[0]][pos[1] - (pos[0]-this.#mapSize+1)] = tile;
+        }
     }
 
     getTile(pos) {
-        return this.#tileMapArray[pos[0]][pos[1]];
+        if (pos[0] < this.#mapSize) {
+            return this.#tileMapArray[pos[0]][pos[1]];
+        } else {
+            return this.#tileMapArray[pos[0]][pos[1] - (pos[0]-this.#mapSize+1)];
+        }
+    }
+
+    setBiome(pos, biome) {
+        this.getTile(pos).setBiome(biome);
+    }
+
+    getBiome(pos) {
+        return this.getTile(pos).getBiome();
+    }
+
+    setEntity(pos, entity) {
+        this.getTile(pos).setEntity(entity);
+    }
+
+    getEntity(pos) {
+        return this.getTile(pos).getEntity();
+    }
+
+    setTileMapArray(_map) {
+        this.#tileMapArray = _map;
     }
 
     getTileMapArray() {
@@ -35,15 +65,15 @@ export class TileMap {
     }
 
     #initTileMapArray(biomeIndex, biomeList) {
-        for (let i in this.#tileMapArray) {
-            i = Number(i);
-            for (let j = 0; j < this.#tileMapArray[i].length; j++) {
-                let pos = [i, j];
+        this.#tileMapArray.forEach((tileArray, i) => {
+            for (let j = 0; j < tileArray.length; j++) {
 
                 if (i < this.#mapSize) {
+                    const pos = [i, j];
                     let biomeType = biomeList[i][j];
                     this.#initTile(pos, biomeType, biomeIndex);
                 } else {
+                    const pos = [i, j+(i-this.#mapSize)+1];
                     let biomeType =
                         biomeList[this.#mapSize * 2 - i - 2][
                             this.#tileMapArray[i].length - j - 1
@@ -51,7 +81,7 @@ export class TileMap {
                     this.#initTile(pos, biomeType, biomeIndex);
                 }
             }
-        }
+        });
     }
 }
 
@@ -79,6 +109,7 @@ class Tile {
     setBiome(_biome) {
         this.#biome = _biome;
         this.#UI.refresh(this.#biome, this.#entity);
+        return this;
     }
 
     getEntity() {
@@ -88,6 +119,7 @@ class Tile {
     setEntity(_entity) {
         this.#entity = _entity;
         this.#UI.refresh(this.#biome, this.#entity);
+        return this;
     }
 
     getUI() {
@@ -104,12 +136,13 @@ class TileUI {
     #pos;
     #biome;
     #entity;
+    #clickFunc;
 
     constructor(_pos, _biome, _entity, mapSize) {
         this.#initTileUI(_pos, mapSize);
         this.refresh(_biome, _entity);
 
-        this.#pos = pos;
+        this.#pos = _pos;
         this.#biome = _biome;
         this.#entity = _entity;
     }
@@ -122,13 +155,7 @@ class TileUI {
         _div.setAttribute('id', 'tile_' + i + '_' + j);
         _div.classList.add('tileDiv');
         _div.style.top = (i - (mapSize - 1) - 1) * TileUI.top + 'rem';
-
-        if (i < mapSize) {
-            _div.style.left = (-(i + mapSize) + j * 2) * TileUI.left + 'rem';
-        } else {
-            _div.style.left =
-                (-(mapSize * 3 - i - 2) + j * 2) * TileUI.left + 'rem';
-        }
+        _div.style.left = (-(i + mapSize) + j * 2) * TileUI.left + 'rem';
 
         this.#div = _div;
     }
@@ -148,20 +175,28 @@ class TileUI {
         biomeImg.classList.add('biomeImg');
 
         this.#div.append(biomeImg);
+
+        this.#biome = biome;
     }
 
     #refreshEntity(entity) {
-        if (entity === null) return;
+        if (entity === null) {
+            this.#entity = entity;
+            return;
+        }
 
         let entityImg = Utils.getImgElement(entity.getType());
         entityImg.classList.add('entityImg');
 
         this.#div.append(entityImg);
+
+        this.#entity = entity;
     }
 
     setClickFunction(func) {
-        this.#div.addEventListener('click', () => {
-            func(this.#pos, this.#biome, this.#entity);
-        });
+        this.#div.removeEventListener('click', this.#clickFunc);
+        const clickFunc = () => {func(this.#pos, this.#biome, this.#entity)};
+        this.#clickFunc = clickFunc;
+        this.#div.addEventListener('click', clickFunc);
     }
 }

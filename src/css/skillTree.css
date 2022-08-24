@@ -1,0 +1,62 @@
+.lineDiv {
+    display: flex;
+    justify-content: left;
+}
+
+.lineDiv > hr {
+    width: -webkit-fill-available;
+    height: 0.2rem;
+    border: white 0.2rem outset;
+    background-color: white;
+}
+div[id^=skillTreeDiv_] {
+    justify-content: flex-start;
+    padding-top: 10vh;
+}
+
+.skillDiv {
+    margin: 1.3rem;
+    height: fit-content;
+    border-radius: .5rem;
+    background-color: white;
+    box-shadow: grey 0rem 0.1rem 0.5rem 0.1rem;
+    position: relative;
+}
+
+.skillDiv.focused {
+    box-shadow: grey 0rem 0.5rem 1rem 0.1rem !important;
+    margin: .3rem !important;
+    padding: .3rem !important;
+    top: -0.5rem;
+    background-color: rgb(230, 230, 255);
+}
+
+.skillDiv.focused > p[id^=skillTitle_] {
+    font-size: 2.5rem !important;
+}
+
+.skillDiv.researchable {
+    background-color: rgb(255, 220, 180) !important;
+}
+
+.skillDiv.researching {
+    background-color: rgb(255, 255, 200) !important;
+}
+
+.skillDiv.learned {
+    background-color: rgb(200, 255, 200) !important;
+}
+
+p[id^=skillTitle_] {
+    margin: 0;
+    padding: 1rem 2.5rem;
+    font-size: 2.3rem;
+}
+
+p[id^=skillDescription_] {
+    margin: 0;
+    padding: 1rem 1rem;
+    padding-top: 0;
+    font-size: 1.5rem;
+    max-width: fit-content;
+}

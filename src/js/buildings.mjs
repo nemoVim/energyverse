@@ -17,6 +17,61 @@ export class Factory extends Building {
     }
 }
 
+export class ScoreBuilding extends Building {
+    constructor(scoreBuilding, pos, team) {
+        super(scoreBuilding, pos, team);
+    }
+}
+
+export class WindScore extends ScoreBuilding {
+    static cost = 25;
+    static type = 'windScore';
+    static name = '풍력 점수 건물';
+    static earn = 45;
+
+    #value;
+
+    constructor(pos, team, world, status) {
+        super(WindScore, pos, team);
+
+        this.#value = 0;
+    }
+
+    settle() {
+        this.#value += WindScore.earn;
+    }
+
+    setValue(_value) {
+        this.#value = _value;
+    }
+
+    getValue() {
+        return this.#value;
+    }
+}
+
+export class SolarScore extends ScoreBuilding {
+    static cost = 10;
+    static type = 'solarScore';
+    static name = '태양광 점수 건물';
+    static earn = 90;
+
+    constructor(pos, team, world, status) {
+        super(SolarScore, pos, team);
+    }
+}
+
+export class AtomicScore extends ScoreBuilding {
+    static cost = 20;
+    static type = 'atomicScore';
+    static name = '원자력 점수 건물';
+    static earn = 30;
+
+    constructor(pos, team, world, status) {
+        super(AtomicScore, pos, team);
+    }
+}
+
 export class PowerPlant extends Building {
     #earn = 0;
 
@@ -39,10 +94,10 @@ export class PowerPlant extends Building {
 }
 
 export class ThermalPower extends PowerPlant {
-    static cost = 0;
+    static cost = 30;
     static type = 'thermalPower';
     static name = '화력 발전소';
-    static earn = 14;
+    static earn = 15;
 
     static findFuel(buildPos, world) {
         return Move.around(buildPos, 1).reduce((prev, pos) => {
@@ -80,15 +135,16 @@ export class ThermalPower extends PowerPlant {
 
     // Override
     generate() {
-        if (this.#fuel.getAmount() > 0) {
+        if (this.#fuel === null)
+            return 0;
 
-            this.#world.increaseTemp();
+        if (this.#fuel.getAmount() > 0) {
 
             this.#fuel.modifyAmount(-1);
 
             if (this.#fuel.getAmount() === 0) {
                 super.setEarn(0);
-                return Thermal.earn;
+                return ThermalPower.earn;
             } else {
                 return super.getEarn();
             }
@@ -102,54 +158,31 @@ export class ThermalPower extends PowerPlant {
     }
 }
 
-export class SolarPower extends PowerPlant {
-    static cost = 0;
-    static type = 'solarPower';
-    static name = '태양광 발전소';
-
-    static calcEarn(buildPos, world, status) {
-        return Move.around(buildPos, 1).concat([buildPos]).reduce((prev, pos) => {
-
-            let biome = world.getBiome(pos);
-            if (biome.getType() === 'mountain') return prev;
-
-            let entity = world.getEntity(pos);
-            if (entity === null || entity.getType() === 'solarPower') {
-                if (status.hasSolarPower(2)) {
-                    return prev + 2;
-                } else {
-                    return prev + 1;
-                }
-            } else {
-                return prev;
-            }
-        }, 0);
-    }
-
-    constructor(pos, team, world, status) {
-        let earn = SolarPower.calcEarn(pos, world, status);
-
-        super(SolarPower, earn, pos, team);
-    }
-}
-
 export class WindPower extends PowerPlant {
-    static cost = 7.6;
+    static cost = 20;
     static type = 'windPower';
     static name = '풍력 발전소';
 
-    static calcEarn(buildPos, world, status) {
+    #world;
+    #status;
+
+    calcEarn() {
+
+        const buildPos = super.getPos();
+
         return Move.around(buildPos, 1).concat([buildPos]).reduce((prev, pos) => {
             let earn = prev;
 
-            if (status.hasWindPower(2)) {
-                let entity = world.getEntity(pos);
-                if (entity.getType() === 'windPower') {
-                    earn += 2;
-                }
+            if (this.#status.hasWindPower(2)) {
+                let entity = this.#world.getEntity(pos);
+                if (entity !== null && pos !== buildPos) {
+                    if (entity.getType() === 'windPower') {
+                        earn += 1;
+                    }
+                } 
             }
 
-            let biome = world.getBiome(pos);
+            let biome = this.#world.getBiome(pos);
             if (biome.getType() === 'mountain') earn += 1;
 
             return earn;
@@ -157,18 +190,59 @@ export class WindPower extends PowerPlant {
         }, 0);
     }
 
-    constructor(pos, team, world, status) {
-        let earn = WindPower.calcEarn(pos, world, status);
+    constructor(pos, team, _world, _status) {
+        super(WindPower, 0, pos, team);
+        this.#world = _world;
+        this.#status = _status;
+        super.setEarn(this.calcEarn());
+    }
+}
 
-        super(WindPower, earn, pos, team);
+
+export class SolarPower extends PowerPlant {
+    static cost = 25;
+    static type = 'solarPower';
+    static name = '태양광 발전소';
+
+    #world;
+    #status;
+
+    calcEarn() {
+        let buildPos = super.getPos();
+
+        let earn = Move.around(buildPos, 1).concat([buildPos]).reduce((prev, pos) => {
+
+            let biome = this.#world.getBiome(pos);
+            if (biome.getType() === 'mountain') return prev;
+
+            let entity = this.#world.getEntity(pos);
+            if (entity === null || entity.getType() === 'solarPower') {
+                return prev + 1;
+            } else {
+                return prev;
+            }
+        }, 0);
+
+        if (this.#status.hasSolarPower(2)) {
+            earn += 5;
+        }
+
+        return earn;
+    }
+
+    constructor(pos, team, _world, _status) {
+        super(SolarPower, 0, pos, team);
+        this.#world = _world;
+        this.#status = _status;
+        super.setEarn(this.calcEarn());
     }
 }
 
 export class AtomicPower extends PowerPlant {
-    static cost = 0;
+    static cost = 45;
     static type = 'atomicPower';
     static name = '원자력 발전소';
-    static earn = 21;
+    static earn = 25;
 
     static isBuildable(buildPos, world, count, status) {
         if (AtomicPower.#isBulidableMore(count, status) && AtomicPower.#isBuildableHere(buildPos, world, status)) {
@@ -179,7 +253,7 @@ export class AtomicPower extends PowerPlant {
     }
 
     static #isBulidableMore(count, status) {
-        if (status.hasAtomicPower(28)) {
+        if (status.hasAtomicPower(4)) {
             if (count < 6) {
                 return true;
             } else {
@@ -195,7 +269,7 @@ export class AtomicPower extends PowerPlant {
     }
 
     static #isBuildableHere(buildPos, world, status) {
-        if (status.hasAtomicPower(27)) return true;
+        if (status.hasAtomicPower(2)) return true;
 
         return Move.around(buildPos, 1).reduce((prev, pos) => {
             let biome = world.getBiome(pos);
@@ -204,15 +278,38 @@ export class AtomicPower extends PowerPlant {
         }, false);
     }
 
-    constructor(pos, team, world, status) {
+    #world;
+    #status;
+
+    calcEarn() {
+
+        const buildPos = super.getPos();
+
+        if (this.#status.hasAtomicPower(2)) return AtomicPower.earn;
+
+        return Move.around(buildPos, 1).reduce((prev, pos) => {
+            let biome = this.#world.getBiome(pos);
+            if (biome.getType() === 'water') return AtomicPower.earn;
+            return prev;
+        }, 0);
+
+    }
+
+    constructor(pos, team, _world, _status) {
         super(AtomicPower, AtomicPower.earn, pos, team);
+        this.#world = _world;
+        this.#status = _status;
     }
 }
 
+
 export const Buildings = {
-    FACTORY: Factory,
-    THERMAL_POWER: ThermalPower,
-    SOLAR_POWER: SolarPower,
-    WIND_POWER: WindPower,
-    ATOMIC_POWER: AtomicPower,
+    factory: Factory,
+    thermalPower: ThermalPower,
+    windPower: WindPower,
+    solarPower: SolarPower,
+    atomicPower: AtomicPower,
+    windScore: WindScore,
+    solarScore: SolarScore,
+    atomicScore: AtomicScore,
 };

@@ -54,18 +54,22 @@ export class Fuel extends Biome {
         this.#amount = _amount;
     }
 
+    setAmount(_amount) {
+        this.#amount = Number(_amount);
+    }
+
     getAmount() {
         return this.#amount;
     }
 
     modifyAmount(delta) {
-        this.#amount += delta;
+        this.#amount += Number(delta);
     }
 }
 
 export const Biomes = {
-    WATER: Water,
-    GROUND: Ground,
-    MOUNTAIN: Mountain,
-    FUEL: Fuel,
+    water: Water,
+    ground: Ground,
+    mountain: Mountain,
+    fuel: Fuel,
 };

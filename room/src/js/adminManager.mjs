@@ -1,8 +1,16 @@
-import { AtomicPower, Buildings } from '../../../src/js/buildings.mjs';
+import { Biomes } from '../../../src/js/biomes.mjs';
+import { Buildings } from '../../../src/js/buildings.mjs';
+import { Move } from '../../../src/js/move.mjs';
+import { Temperature } from '../../../src/js/temperature.mjs';
+import { Units } from '../../../src/js/units.mjs';
+import { Utils } from '../../../src/js/utils.mjs';
 import { World } from '../../../src/js/world.mjs';
-import { DummyTeam } from './dummyTeam.mjs';
+import { AdminUI } from './adminUI.mjs';
+import { GameTeam } from './gameTeam.mjs';
 
 export class AdminManager {
+
+    #name;
 
     #socket;
     #world;
@@ -10,221 +18,310 @@ export class AdminManager {
     #teams = [];
     #teamCnt = 0;
 
+    #firstTurn = -1;
     #turn = -1;
 
-    constructor(_socket) {
+    #round = 0;
+
+    #adminUI;
+
+    #temp;
+    #thermal = 0;
+    #seaLevel = 0;
+
+    constructor(_socket, _name) {
+
+        this.#name = _name;
+
         this.#socket = _socket;
         this.#world = new World();
+        this.#temp = new Temperature();
 
-        document.getElementById('startBtn').addEventListener('click', () => {
-            this.#start();
+        this.#adminUI = new AdminUI(this);
+
+        this.#socket.on('usersData', msg => {
+            console.log('usersData');
+            this.reSettingTeams(JSON.parse(msg));
+            this.#socket.emit('loadWorld');
+        });
+
+        this.#socket.on('worldData', msg => {
+            console.log('worldData');
+            this.reSettingWorld(JSON.parse(msg));
+
+            document.getElementById('readyDiv').classList.add('hidden');
+            document.getElementById('startBtn').classList.add('hidden');
+
+        });
+
+        this.#addListeners();
+
+        document.getElementById('readyBtn').addEventListener('click', () => {
+            this.#ready();
         });
     }
 
-    #start() {
+    #ready() {
+
+        this.#socket.emit('ready');
+
+        this.#adminUI.init();
+
         this.#socket.on('socketList', (msg) => {
 
             this.#teamNames = new Array(JSON.parse(msg))[0];
+            this.#teamNames.splice(this.#teamNames.indexOf(this.#name), 1);
             this.#teamCnt = this.#teamNames.length;
+            this.#initTeams();
 
-            this.#init();
+            this.#adminUI.readyDone();
 
             this.#socket.removeAllListeners('socketList');
         });
     }
 
-    #init() {
+    #addListeners() {
 
-        this.#initTeams();
+        this.#socket.on('turnEnd', () => {
+            if (this.#turn === this.getPreviousIndex(this.#firstTurn)) {
+                this.settle();
+            } else {
+                this.next();
+            }
+        });
 
-        this.#initUI();
+        this.#socket.on('wait', teamIndex => {
+            this.#teams[teamIndex].getTimer().stop();
+            this.#teams[teamIndex].getTimer().setTime(0);
+        });
 
-        this.#addListeners();
+        this.#socket.on('researchClient', msg => {
+            // [skillIndex, teamIndex]
+            this.#teams[Number(msg[1])].research(Number(msg[0]));
+        });
 
-        this.#turn = -1;
-        this.#turnChanged();
+        this.#socket.on('unResearchClient', msg => {
+            // [skillIndex, teamIndex]
+            this.#teams[Number(msg[1])].unResearch(Number(msg[0]));
+        });
     }
 
     #initTeams() {
         // TODO: Make list randomly.
-        let randomTeamNameList = teamNameList;
+        let randomTeamNameList = [...this.#teamNames];
         this.#teamNames = randomTeamNameList;
+
+        console.log('initTeams');
 
         this.#socket.emit('init', this.#teamNames);
 
-        this.#initDummyTeams();
-    }
-
-    #initDummyTeams() {
-        for (let name of this.#teamNameList) {
-            this.#teams.push(new DummyTeam(name));
-        }
-    }
-
-    #initUI() {
-        this.#initDivs();
-        this.#initBtns();
-        this.#initMap();
-    }
-
-    #initDivs() {
-
-        document.getElementById('roomDiv').classList.add('hidden');
-        document.getElementById('gameDiv').classList.remove('hidden');
-        document.getElementById('adminDiv').classList.remove('hidden');
+        this.#initTeamList();
 
     }
 
-    #initBtns() {
-
-        this.#initActionBtns();
-        this.#initFunctionBtns();
-    }
-
-    #initActionBtns() {
-        document.getElementById('buildBtn').addEventListener('click', (e) => {
-            this.#clickBuildBtn();
-        });
-
-        document.getElementById('thermalPowerBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('THERMAL_POWER');
-        });
-
-        document.getElementById('windPowerBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('WIND_POWER');
-        });
-
-        document.getElementById('solarPowerBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('SOLAR_POWER');
-        });
-
-        document.getElementById('atomicPowerBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('ATOMIC_POWER');
-        });
-
-        document.getElementById('windScoreBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('WIND_SCORE');
-        });
-
-        document.getElementById('solarScoreBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('SOLAR_SCORE');
-        });
-
-        document.getElementById('atomicScoreBtn').addEventListener('click', (e) => {
-            this.#clickBuildingBtn('ATOMIC_SCORE');
-        });
-
-        // -----------------------------------------
-
-        document.getElementById('unitBtn').addEventListener('click', (e) => {
-            this.#clickUnitBtn();
-        });
-
-        document.getElementById('probeBtn').addEventListener('click', (e) => {
-            this.produce('PROBE');
-        });
-
-        document.getElementById('windUnitBtn').addEventListener('click', (e) => {
-            this.produce('WIND_UNIT');
-        });
-
-        document.getElementById('solarUnitBtn').addEventListener('click', (e) => {
-            this.produce('SOLAR_UNIT');
-        });
-
-        document.getElementById('atomicUnitBtn').addEventListener('click', (e) => {
-            this.produce('ATOMIC_UNIT');
-        });
-
-        // ------------------------------------------
-
-        document.getElementById('destroyBtn').addEventListener('click', (e) => {
-            this.#clickDestroyBtn();
-        });
-
-        document.getElementById('researchBtn').addEventListener('click', (e) => {
-            this.#clickResearchBtn();
-        });
-
-        // ------------------------------------------
-        
-        document.getElementById('changeBiomeBtn').addEventListener('click', (e) => {
-            this.#clickChangeBiomeBtn();
-        });
-
-        document.getElementById('upBtn').addEventListener('click', (e) => {
-            this.#clickUpBtn();
-        });
-
-        document.getElementById('downBtn').addEventListener('click', (e) => {
-            this.#clickDownBtn();
+    #initTeamList() {
+        this.#teamNames.forEach((name, index) => {
+            this.#teams.push(new GameTeam(name, index, this));
         });
     }
 
-    #initFunctionBtns() {
-        document.getElementById('nextBtn').addEventListener('click', (e) => {
-            this.next();
+    reSettingTeams(config) {
+        // [teamNameList, earn, energy, score, researching, learned, time, nowTurn, temperature, round, firstTurn];
+        console.log(config);
+
+        this.#teamCnt = config[0].length;
+
+        this.#teamNames = config[0];
+        this.#initTeamList(config[0]);
+
+        this.#adminUI.init();
+        this.#adminUI.readyDone();
+
+        config[0].forEach((teamName, index) => {
+            this.#teams[index].setEarn(config[1][index]);
+            this.#teams[index].setEnergy(config[2][index]);
+            this.#teams[index].setScore(config[3][index]);
+            this.#teams[index].setResearching(new Set(config[5][index]));
+            this.#teams[index].learn();
+            this.#teams[index].setResearching(new Set(config[4][index]));
+            if (index === Number(config[7]) && Number(config[6][index]) !== 0) {
+                this.#teams[index].start();
+            }
+            this.#teams[index].getTimer().setTime(config[6][index]);
         });
 
-        document.getElementById('previousBtn').addEventListener('click', (e) => {
-            this.previous();
-        });
+        this.#turn = Number(config[7]);
 
-        document.getElementById('modifyEnergyBtn').addEventListener('click', (e) => {
-            let delta = prompt('변화량을 입력하세요.');
-            if (delta == null || delta === '') return;
+        this.#temp.setTemp(config[8]);
+        this.#seaLevel = parseInt(Math.floor((this.#temp.getTemp()-Temperature.initialTemp)*10/5));
 
-            this.modifyEnergy(Number(delta));
-        });
+        this.#round = Number(config[9]);
 
-        document.getElementById('modifyScoreBtn').addEventListener('click', (e) => {
-            let delta = prompt('변화량을 입력하세요.');
-            if (delta == null || delta === '') return;
+        this.#firstTurn = Number(config[10]);
 
-            this.modifyScore(Number(delta));
-        });
+        this.#adminUI.refresh();
 
-        document.getElementById('settleBtn').addEventListener('click', (e) => {
-            this.settle();
-        });
     }
 
-    #addListeners() {
-        this.#socket.on('thermal', msg => {
-            // [pos] amount of fuel -1 at pos, and world temperature is increased.
-            const config = new Array(JSON.parse(msg));
-            this.#thermal(config);
+    reSettingWorld(config) {
+        // [biomes, buildings, units];
+        let cnt = -1;
+        this.#world.getTileMap().getTileMapArray().forEach((tileArray, i) => {
+            tileArray.forEach((tile, j) => {
+                cnt += 1;
+                if (config[0][cnt][0] === 'fuel') {
+                    tile.getBiome().setAmount(config[0][cnt][1]);
+                } else {
+                    tile.setBiome(new Biomes[[i, j], config[0][cnt][0]]);
+                }
+            });
         });
 
-        this.#socket.on('refresh', msg => {
-            // [team, predict, energy, score]
-            const config = new Array(JSON.parse(msg));
-            this.#refresh(config);
+        config[1].forEach((teamBuildings, teamIndex) => {
+            teamBuildings.forEach(buildingConfig => {
+                if (buildingConfig[0] === 'atomicPower') {
+                    this.#teams[teamIndex].modifyAtomicCnt(1);
+                }
+
+                const building = new Buildings[buildingConfig[0]](buildingConfig[1], teamIndex, this.#world, this.#teams[teamIndex].getStatus());
+
+                if (buildingConfig[0] === 'windScore') {
+                    building.setValue(buildingConfig[2]);
+                }
+
+                this.#world.setEntity(buildingConfig[1], building);
+                this.#teams[teamIndex].getBuildings().push(building);
+            });
         });
+
+        config[2].forEach((teamUnits, teamIndex) => {
+            teamUnits.forEach(unitType => {
+                const unit = new Units[unitType](teamIndex);
+                this.#teams[teamIndex].getUnits().push(unit);
+            });
+        });
+
+        this.calcEarn();
+
+        this.#adminUI.refresh();
+
+        Utils.showElement('nextBtn');
+        Utils.showElement('previousBtn');
+        Utils.showElement('endBtn');
+        Utils.showElement('settleBtn');
+
+        this.#socket.emit('saveUsers', this.makeUsersData());
+        this.#socket.emit('saveWorld', this.makeWorldData());
+        this.saveData();
     }
 
-    //-------------------------------
+    // -------------------------------
+
+    start() {
+        this.#socket.emit('start');
+        this.#firstTurn = 0;
+        this.#turn = 0;
+
+        this.#adminUI.refresh();
+
+        this.saveData();
+    }
+
+    // --------------------------------
+
+    getNextIndex(nowIndex) {
+        const nextIndex =
+            nowIndex === this.#teamCnt-1 ? (nowIndex = 0) : (nowIndex += 1);
+        return nextIndex;
+    }
+
+    getPreviousIndex(nowIndex) {
+        const previousIndex =
+            nowIndex === 0 ? (nowIndex = this.#teamCnt-1) : (nowIndex -= 1);
+        return previousIndex;
+    }
+
+    startRound() {
+        this.#round += 1;
+        this.turnChanged();
+        this.#socket.emit('round', this.#round);
+        this.#adminUI.refresh();
+        this.#socket.emit('saveUsers', this.makeUsersData());
+    }
 
     next() {
-        this.#turn =
-            this.#turn === this.#teamCnt-1 ? (this.#turn = 0) : (this.#turn += 1);
-        this.#turnChanged();
+        if (this.#turn === this.getPreviousIndex(this.#firstTurn)) {
+            if (!confirm('현재 플레이어가 현 라운드의 마지막 플레이어입니다. 턴을 넘기시겠습니까?')) {
+                return;
+            }
+        }
+        this.#turn = this.getNextIndex(this.#turn);
+        this.turnChanged();
     }
 
     previous() {
-        this.#turn =
-            this.#turn === 0 ? (this.#turn = this.#teamCnt-1) : (this.#turn -= 1);
-        this.#turnChanged();
+        this.#turn = this.getPreviousIndex(this.#turn);
+        this.turnChanged();
     }
 
-    #turnChanged() {
+    turnChanged() {
+        this.#teams.forEach((team, index) => {
+            team.getTimer().stop();
+            team.getTimer().setTime(0);
+            this.#socket.emit('time', [0, index]);
+        });
         this.#socket.emit('turn', this.#turn);
+        this.getNowTeam().start();
+        this.#adminUI.turnChanged();
+    }
+
+    endTurn() {
+        this.getNowTeam().stop();
+    }
+
+
+    // ------------------------------------
+
+    getUI() {
+        return this.#adminUI;
+    }
+
+    getRound() {
+        return this.#round;
+    }
+
+    getTemp() {
+        return this.#temp;
+    }
+
+    modifyTemp(delta) {
+        this.#temp.modifyTemp(delta);
+        this.#socket.emit('temperature', this.#temp.getTemp());
+    }
+
+    getTeams() {
+        return this.#teams;
+    }
+
+    getNowTeam() {
+        return this.#teams[this.#turn];
+    }
+
+    getNowStatus() {
+        return this.#teams[this.#turn].getStatus();
+    }
+
+    getWorld() {
+        return this.#world;
+    }
+
+    emit(name, config) {
+        this.#socket.emit(name, config);
     }
 
     //----------------------------------
 
-    
-    #setClickFunction(func) {
+    #setWorldClickFunc(func) {
         const tileMapArray = this.#world.getTileMap().getTileMapArray();
         tileMapArray.forEach(tileArray => {
             tileArray.forEach(tile => {
@@ -233,222 +330,279 @@ export class AdminManager {
         });
     }
 
-    #clickBuildBtn() {
+    // ----------------------------------------
 
-        const buildBtns = document.querySelectorAll('#buildDiv > button');
-
-        buildBtns.forEach(btn => {
-            btn.classList.add('hidden');
-        });
-        
-        document.getElementById('buildDiv').classList.remove('hidden');
-
-        const team = this.#teams[this.#turn];
-
-
-        if (team.getStatus().hasFactory(1)) {
-            document.getElementById('factoryBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasThermalPower(1)) {
-            document.getElementById('thermalPowerBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasWindPower(1)) {
-            document.getElementById('windPowerBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasSolarPower(1)) {
-            document.getElementById('solarPowerBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasAtomicPower(1)) {
-            document.getElementById('atomicPowerBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasWindScore(1)) {
-            document.getElementById('windScoreBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasSolarScore(1)) {
-            document.getElementById('solarScoreBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasAtomicScore(1)) {
-            document.getElementById('atomicScoreBtn').classList.remove('hidden');
-        }
-    }
-
-    #clickBuildingBtn(type) {
-        this.#setClickFunction((pos, biome, entity) => {
+    build(type) {
+        this.#setWorldClickFunc((pos, biome, entity) => {
             if (entity !== null) return;
-
-            const status = this.#teams[this.#turn].getStatus();
-
-            if (type === 'ATOMIC_POWER' && !AtomicPower.isBuildable(pos, this.#world, status)) {
-                return;
-            }
-
-            if (biome.getType() === 'ground') {
-                this.build(type, pos);
-            } else if (biome.getType() === 'mountain' && status.hasProbe(8)) {
-                this.build(type, pos);
+            if (this.getNowTeam().build(type, pos, biome)) {
+                this.calcEarn();
             }
         });
+
+        this.#adminUI.showWorld();
     }
 
-    #clickUnitBtn() {
-
-        const unitBtns = document.querySelectorAll('#unitDiv > button');
-
-        unitBtns.forEach(btn => {
-            btn.classList.add('hidden');
-        });
-        
-        document.getElementById('unitDiv').classList.remove('hidden');
-
-        const team = this.#teams[this.#turn];
-
-        if (team.getStatus().hasProbe(1)) {
-            document.getElementById('probeBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasWindUnit(1)) {
-            document.getElementById('windUnitBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasSolarUnit(1)) {
-            document.getElementById('solarUnitBtn').classList.remove('hidden');
-        }
-
-        if (team.getstatus().hasAtomicUnit(1)) {
-            document.getelementbyid('atomicUnitBtn').classlist.remove('hidden');
-        }
-
-        if (team.getStatus().hasMissile(1)) {
-            document.getElementById('missileBtn').classList.remove('hidden');
-        }
-    }
-
-    #clickDestroyBtn() {
-        document.getElementById('destroyDiv').classList.remove('hidden');
-
-        this.#setClickFunction((pos, biome, entity) => {
+    destroyBuilding() {
+        this.#setWorldClickFunc((pos, biome, entity) => {
             if (entity === null) return;
-            this.destroy(pos);
+            this.getNowTeam().destroy(entity);
+            this.#teams[entity.getTeam()].destroyed(entity);
+            this.calcEarn();
         });
+
+        this.#adminUI.showWorld();
     }
 
-    #clickResearchBtn() {
-        document.getElementById('researchDiv').classList.remove('hidden');
-    }
-    
-    #clickChangeBiomeBtn() {
-
-        const changeBiomeBtns = document.querySelectorAll('#changeBiomeDiv > button');
-
-        changeBiomeBtns.forEach(btn => {
-            btn.classList.add('hidden');
-        });
-        
-        document.getElementById('changeBiomeDiv').classList.remove('hidden');
-
-        const team = this.#teams[this.#turn];
-
-        if (team.getStatus().hasProbe(128)) {
-            document.getElementById('upBtn').classList.remove('hidden');
-        }
-
-        if (team.getStatus().hasProbe(4)) {
-            document.getElementById('downBtn').classList.remove('hidden');
-        }
-    }
-
-    #clickUpBtn() {
-        this.#setClickFunction((pos, biome, entity) => {
-            if (biome.getType() === 'water') {
-                this.changeBiome(pos, 'GROUND');
-            } else if (biome.getType() === 'ground') {
-                this.changeBiome(pos, 'MOUNTAIN');
-            }
-        });
-    }
-
-    #clickDownBtn() {
-        this.#setClickFunction((pos, biome, entity) => {
-            if (biome.getType() === 'mountain') {
-                this.changeBiome(pos, 'GROUND');
-            } else if (biome.getType() === 'ground') {
-                this.changeBiome(pos, 'WATER');
-            }
-        });
-    }
-
-    build(type, pos) {
-        this.#socket.emit('build', JSON.stringify([type, pos, this.#turn]));
-        const building = new (Buildings[type])(pos, this.#turn, this.#world, this.#teams[this.#turn].getStatus());
-        this.#world.setEntity(pos, building);
-    }
-
-    destroy(pos) {
-        this.#socket.emit('destroy', JSON.stringify([pos, this.#turn]));
-        this.#world.setEntity(pos, null);
-    }
-
-    modifyEnergy(delta) {
-        this.modify('energy', delta);
-    }
-
-    modifyScore(delta) {
-        this.modify('score', delta);
+    destroyUnit(unit) {
+        this.getNowTeam().destroy(unit);
+        this.#teams[unit.getTeam()].destroyed(unit);
     }
 
     modify(type, delta) {
-        this.#socket.emit('modify', JSON.stringify([type, delta, this.#turn]));
-    }
-
-    settle() {
-        let index = 0;
-        this.#settleTeam(index);
-        this.#socket.on('doneSettle', () => {
-            index += 1;
-            if (index >= this.#teamCnt) {
-                this.#socket.removeAllListeners('doneSettle');
-                return;
-            }
-            this.#settleTeam(index);
-        });
+        this.getNowTeam().modify(type, delta);
     }
 
     produce(type) {
-
+        this.getNowTeam().produce(type);
     }
 
-    changeBiome(pos, type) {
+    changeBiomeUp() {
+        this.#setWorldClickFunc((pos, biome, entity) => {
+            if (entity !== null) return;
 
+            if (biome.getType() === 'water') {
+                if (this.getNowTeam().changeBiome('ground', pos)) {
+                    this.calcEarn();
+                }
+            } else if (biome.getType() === 'ground') {
+                if (this.getNowTeam().changeBiome('mountain', pos)) {
+                    this.calcEarn();
+                }
+            }
+        });
+
+        this.#adminUI.showWorld();
     }
 
-    #settleTeam(index) {
-        this.#socket.emit('settle', JSON.stringify(index));
+    changeBiomeDown() {
+        this.#setWorldClickFunc((pos, biome, entity) => {
+            if (entity !== null) return;
+
+            if (biome.getType() === 'mountain') {
+                if(this.getNowTeam().changeBiome('ground', pos)) {
+                    this.calcEarn();
+                }
+            } else if (biome.getType() === 'ground') {
+                if(this.getNowTeam().changeBiome('water', pos)) {
+                    this.calcEarn();
+                }
+            }
+        });
+        this.#adminUI.showWorld();
     }
 
-    #thermal(pos) {
-        this.#world.getBiome(pos).modifyAmount(-1);
-        this.#world.increaseTemp();
-    }
+    showDefaultWorld() {
+        this.#setWorldClickFunc((pos, biome, entity) => {
+            console.log('--pos--');
+            console.log(pos);
+            if (biome.getType() === 'fuel') {
+                alert(`자원이 ${biome.getAmount()}개 남았습니다.`);
+            } else if (entity !== null) {
+                const choice = confirm(`${this.#teamNames[entity.getTeam()]}의 건물입니다.\n파괴하시겠습니까?`);
+                if (choice) {
+                    this.#teams[entity.getTeam()].destroyed(entity);
+                    this.calcEarn();
+                }
+            } else {
+                let choice = prompt('1. 물 / 2. 땅 / 3. 산');
+                if (choice === null || choice === '') return;
+                choice = Number(choice);
 
-    #refresh(config) {
-        const team = this.#teams[config[0]];
-        team.setPredict(config[1]);
-        team.setEnergy(config[2]);
-        team.setScore(config[3]);
+                if (choice === 1) {
+                    this.#world.setBiome(pos, new Biomes.water(pos));
+                } else if (choice === 2) {
+                    this.#world.setBiome(pos, new Biomes.ground(pos));
+                } else if (choice === 3) {
+                    this.#world.setBiome(pos, new Biomes.mountain(pos));
+                }
+
+                this.calcEarn();
+            }
+        });
+
+        this.#adminUI.showWorld();
     }
+    // -------------------------------------
     
-    getTeams() {
-        return this.#teams;
+    calcEarn() {
+        const fuelAmountList = [];
+        this.#world.getTileMap().getTileMapArray().forEach(tileArray => {
+            tileArray.forEach(tile => {
+                if (tile.getBiome().getType() === 'fuel') {
+                    fuelAmountList.push(tile.getBiome().getAmount());
+                }
+            });
+        });
+
+        let _thermal = 0;
+
+        let settleIndex = this.#firstTurn;
+        for (let i = 0; i < this.#teamCnt; i++) {
+            _thermal += this.#teams[settleIndex].calcEarn();
+            settleIndex = this.getNextIndex(settleIndex);
+        }
+
+        this.#world.getTileMap().getTileMapArray().forEach(tileArray => {
+            tileArray.forEach(tile => {
+                if (tile.getBiome().getType() === 'fuel') {
+                    tile.getBiome().setAmount(fuelAmountList.shift());
+                }
+            });
+        });
+
+        this.#thermal = _thermal;
+
+        this.#adminUI.refresh();
     }
 
-    getWorld() {
-        return this.#world;
+    settle() {
+
+        this.#teams.forEach((team, index) => {
+            team.getTimer().stop();
+            team.getTimer().setTime(0);
+            this.#socket.emit('time', [0, index]);
+        });
+
+        this.calcEarn();
+
+        let settleIndex = this.getNextIndex(this.#turn);
+        for (let i = 0; i < this.#teamCnt; i++) {
+            settleIndex = this.getNextIndex(settleIndex);
+            this.#teams[settleIndex].settle();
+        }
+
+        this.#socket.emit('learn');
+
+        this.#temp.modifyTemp(this.#thermal*0.1);
+        this.#socket.emit('temperature', this.#temp.getTemp());
+
+        const _seaLevel = parseInt(Math.floor((this.#temp.getTemp()-Temperature.initialTemp)*10/5));
+        if (this.#seaLevel < _seaLevel) {
+            console.log(`물이 ${_seaLevel-this.#seaLevel}칸 올랐습니다!`);
+            this.#seaLevel = _seaLevel;
+            this.rise();
+        }
+
+        this.#turn = this.getNextIndex(this.getNextIndex(this.#turn));
+        this.#firstTurn = this.#turn;
+
+        this.calcEarn();
+
+        this.#adminUI.refresh();
+
+        this.#socket.emit('saveUsers', this.makeUsersData());
+        this.#socket.emit('saveWorld', this.makeWorldData());
+    }
+
+    rise() {
+        const size = World.worldSize;
+        for (let i = 0; i <= this.#seaLevel; i++) {
+
+            Move.around([size-1, size-1], size-i-1).forEach(pos => {
+                const biome = this.#world.getBiome(pos);
+                const entity = this.#world.getEntity(pos);
+
+                if (biome.getType() === 'ground') {
+                    this.#world.setBiome(pos, new Biomes.water(pos));
+                    if (entity !== null) {
+                        this.#teams[entity.getTeam()].destroyed(entity);
+                    }
+                }
+
+            });
+        }
+    }
+
+    endGame() {
+        this.#socket.emit('endGame');
+    }
+
+    // ------------------------------------------
+
+    saveData() {
+        this.#socket.emit('startSave');
+        this.#socket.on('save', () => {
+            this.#socket.emit('saveUsers', this.makeUsersData());
+            this.#socket.emit('saveWorld', this.makeWorldData());
+        });
+    }
+
+    makeUsersData() {
+        let earn = [];
+        let energy = [];
+        let score = [];
+        let researching = [];
+        let learned = [];
+        let time = [];
+
+        this.#teams.forEach(team => {
+            earn.push(team.getEarn());
+            energy.push(team.getEnergy());
+            score.push(team.getScore());
+            researching.push(Array.from(team.getResearching()));
+            learned.push(Array.from(team.getLearned()));
+            time.push(team.getTimer().getTime());
+        });
+
+        return [this.#teamNames, earn, energy, score, researching, learned, time, this.#turn, this.#temp.getTemp(), this.#round, this.#firstTurn];
+
+    }
+
+    makeWorldData() {
+
+        let biomes = [];
+        // let entities = [];
+        this.#world.getTileMap().getTileMapArray().forEach(tileArray => {
+            tileArray.forEach(tile => {
+                const biome = tile.getBiome();
+                const entity = tile.getEntity();
+                if (biome.getType() === 'fuel') {
+                    biomes.push([biome.getType(), biome.getAmount()]);
+                } else {
+                    biomes.push([biome.getType(), 0]);
+                }
+
+                // if (entity === null) {
+                //     entities.push(entity)
+                // } else {
+                //     entities.push(entity.getType());
+                // }
+            });
+        });
+
+        let buildings = [];
+        let units = [];
+
+        this.#teams.forEach(team => {
+            let teamBuildings = [];
+            let teamUnits = [];
+            team.getBuildings().forEach(building => {
+                if (building.getType() === 'windScore') {
+                    teamBuildings.push([building.getType(), building.getPos(), building.getValue()]);
+                } else {
+                    teamBuildings.push([building.getType(), building.getPos(), 0]);
+                }
+            });
+
+            team.getUnits().forEach(unit => {
+                teamUnits.push(unit.getType());
+            });
+
+            buildings.push(teamBuildings);
+            units.push(teamUnits);
+        });
+
+        return [biomes, buildings, units];
     }
 }

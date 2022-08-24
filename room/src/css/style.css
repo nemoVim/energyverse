@@ -1,0 +1,13 @@
+#startBtn {
+    width: fit-content;
+    font-size: 5rem;
+    padding: 2rem 5rem;
+}
+
+#readyP {
+    font-size: 2rem;
+}
+
+#otherTeamsDiv {
+    display: flex;
+}

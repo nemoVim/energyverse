@@ -127,6 +127,26 @@ export const Skills = [
     new Skill(
         8,
         1,
+        [4],
+        '태양광 유닛 생산',
+        '태양광 유닛을 생산할 수 있습니다.',
+        function (status) {
+            status.upgradeSolarUnit(1);
+        }
+    ),
+    new Skill(
+        9,
+        1,
+        [5],
+        '원자력 점수 건물 건설',
+        '원자력 점수 건물을 건설할 수 있습니다.',
+        function (status) {
+            status.upgradeAtomicScore(1);
+        }
+    ),
+    new Skill(
+        10,
+        1,
         [5],
         '원자력 유닛 생산',
         '원자력 유닛을 생산할 수 있습니다.',
@@ -135,17 +155,17 @@ export const Skills = [
         }
     ),
     new Skill(
-        9,
+        11,
         1,
         [6],
-        '풍력 발전소 건설',
-        '풍력 발전소를 건설할 수 있습니다.',
+        '지형 융기',
+        '일꾼이 지형을 융기시킬 수 있습니다.',
         function (status) {
-            status.upgradeWindPower(1);
+            status.upgradeProbe(64);
         }
     ),
     new Skill(
-        10,
+        12,
         1,
         [6],
         '풍력 유닛 생산',
@@ -155,51 +175,31 @@ export const Skills = [
         }
     ),
     new Skill(
-        11,
+        13,
         1,
         [7],
-        '일꾼 생산 비용 감소',
+        '일꾼 비용 감소',
         '일꾼 생산 비용이 3만큼 감소합니다.',
         function (status) {
             status.upgradeFactory(2);
         }
     ),
     new Skill(
-        12,
-        1,
-        [4],
-        '태양광 유닛 생산',
-        '태양광 유닛을 생산할 수 있습니다.',
-        function (status) {
-            status.upgradeSolarUnit(1);
-        }
-    ),
-    new Skill(
-        13,
-        1,
-        [5],
-        'AP 은행',
-        '원자력 점수 건물을 건설할 수 있습니다.',
-        function (status) {
-            status.upgradeAtomicScore(1);
-        }
-    ),
-    new Skill(
         14,
         2,
-        [9],
-        '피보나치 은행',
-        '풍력 점수 건물을 건설할 수 있습니다.',
+        [11],
+        '풍력 발전소 건설',
+        '풍력 발전소를 건설할 수 있습니다.',
         function (status) {
-            status.upgradeWindScore(1);
+            status.upgradeWindPower(1);
         }
     ),
     new Skill(
         15,
         2,
-        [11],
+        [13],
         '태양광 발전소 강화',
-        '태양광 발전소의 효율이 2배가 됩니다.',
+        '태양광 발전소의 발전량이 5만큼 추가됩니다.',
         function (status) {
             status.upgradeSolarPower(2);
         }
@@ -207,9 +207,9 @@ export const Skills = [
     new Skill(
         16,
         2,
-        [13],
-        '건설 비용 감소',
-        '모든 건물 건설 비용이 5만큼 감소합니다.',
+        [9],
+        '원자력 건물 비용 감소',
+        '원자력 발전소와 원자력 점수 건물의 건설 비용이 5만큼 감소합니다.',
         function (status) {
             status.upgradeProbe(32);
         }
@@ -217,37 +217,17 @@ export const Skills = [
     new Skill(
         17,
         2,
-        [15],
-        '일꾼 건설 강화',
-        '일꾼이 최대 2번 건설할 수 있습니다.',
+        [14],
+        '풍력 발전소 강화',
+        '풍력 발전소의 발전량이 인접한 풍력 발전소 당 1만큼 추가됩니다. 또한, 풍력 발전소의 건설 비용이 5만큼 감소합니다.',
         function (status) {
-            status.upgradeProbe(64);
+            status.upgradeWindPower(2);
         }
     ),
     new Skill(
         18,
         2,
-        [12, 15],
-        '공격 유닛 생산 비용 감소',
-        '모든 공격 유닛의 생산 비용이 3만큼 감소합니다.',
-        function (status) {
-            status.upgradeFactory(4);
-        }
-    ),
-    new Skill(
-        19,
-        2,
-        [16],
-        '원자력 발전소 건설',
-        '핵분열 반전소를 건설할 수 있습니다.',
-        function (status) {
-            status.upgradeAtomicPower(1);
-        }
-    ),
-    new Skill(
-        20,
-        2,
-        [10],
+        [12],
         '풍력 유닛 산 이동',
         '풍력 유닛이 산으로 이동할 수 있습니다.',
         function (status) {
@@ -255,9 +235,9 @@ export const Skills = [
         }
     ),
     new Skill(
-        21,
+        19,
         2,
-        [10],
+        [12],
         '풍력 유닛 물 이동',
         '풍력 유닛이 물로 이동할 수 있습니다.',
         function (status) {
@@ -265,9 +245,29 @@ export const Skills = [
         }
     ),
     new Skill(
+        20,
+        2,
+        [15],
+        '태양광 점수 건물 건설',
+        '태양광 점수 건물을 건설할 수 있습니다.',
+        function (status) {
+            status.upgradeSolarScore(1);
+        }
+    ),
+    new Skill(
+        21,
+        2,
+        [8, 15],
+        '공격 유닛 비용 감소',
+        '모든 공격 유닛의 생산 비용이 3만큼 감소합니다.',
+        function (status) {
+            status.upgradeFactory(4);
+        }
+    ),
+    new Skill(
         22,
         2,
-        [12],
+        [8],
         '태양광 유닛 산 이동',
         '태양광 유닛이 산으로 이동할 수 있습니다.',
         function (status) {
@@ -277,7 +277,7 @@ export const Skills = [
     new Skill(
         23,
         2,
-        [12],
+        [8],
         '태양광 유닛 물 이동',
         '태양광 유닛이 물로 이동할 수 있습니다.',
         function (status) {
@@ -287,7 +287,17 @@ export const Skills = [
     new Skill(
         24,
         2,
-        [8],
+        [16],
+        '원자력 발전소 건설',
+        '원자력 반전소를 건설할 수 있습니다.',
+        function (status) {
+            status.upgradeAtomicPower(1);
+        }
+    ),
+    new Skill(
+        25,
+        2,
+        [10],
         '원자력 유닛 산 이동',
         '원자력 유닛이 산으로 이동할 수 있습니다.',
         function (status) {
@@ -295,9 +305,9 @@ export const Skills = [
         }
     ),
     new Skill(
-        25,
+        26,
         2,
-        [8],
+        [10],
         '원자력 유닛 물 이동',
         '원자력 유닛이 물로 이동할 수 있습니다.',
         function (status) {
@@ -305,19 +315,19 @@ export const Skills = [
         }
     ),
     new Skill(
-        26,
+        27,
         2,
-        [14],
-        '풍력 발전소 강화',
-        '풍력 발전소의 발전량이 인접한 풍력 발전소 당 2만큼 추가됩니다.',
+        [17],
+        '풍력 점수 건물 건설',
+        '풍력 점수 건물을 건설할 수 있습니다.',
         function (status) {
-            status.upgradeWindPower(2);
+            status.upgradeWindScore(1);
         }
     ),
     new Skill(
-        27,
+        28,
         2,
-        [19],
+        [24],
         '원자력 발전소 강화 1',
         '원자력 발전소의 건설 지형 제한이 사라집니다.',
         function (status) {
@@ -325,59 +335,39 @@ export const Skills = [
         }
     ),
     new Skill(
-        28,
+        29,
         2,
-        [19],
+        [24],
         '원자력 발전소 강화 2',
-        '원자력 발전소의 건설 개수 제한이 사라집니다.',
+        '원자력 발전소의 건설 개수 제한이 6개로 늘어납니다.',
         function (status) {
             status.upgradeAtomicPower(4);
         }
     ),
     new Skill(
-        29,
+        30,
         3,
-        [26],
-        '유닛 즉시 이동',
-        '모든 유닛이 생산 후 즉시 이동이 가능합니다.',
+        [27],
+        '유닛 즉시 행동',
+        '모든 유닛이 생산 후 즉시 행동이 가능합니다.',
         function (status) {
             status.upgradeUnits(1);
         }
     ),
     new Skill(
-        30,
-        3,
-        [26],
-        '지형 융기',
-        '일꾼이 지형을 융기시킬 수 있습니다.',
-        function (status) {
-            status.upgradeProbe(128);
-        }
-    ),
-    new Skill(
         31,
         3,
-        [17],
-        '설치 은행',
-        '태양광 점수 건물을 건설할 수 있습니다.',
-        function (status) {
-            status.upgradeSolarScore(1);
-        }
-    ),
-    new Skill(
-        32,
-        3,
-        [18],
+        [21],
         '유닛 추가 이동',
-        '모든 유닛이 이동 후 추가로 1칸 더 이동할 수 있습니다. 단, 상대 유닛/건물이 있는 칸으로는 불가합니다.',
+        '모든 유닛이 이동 후 추가로 1칸 더 이동할 수 있습니다. 단, 유닛/건물이 있는 칸으로는 불가합니다.',
         function (status) {
             status.upgradeUnits(2);
         }
     ),
     new Skill(
-        33,
+        32,
         3,
-        [27, 28],
+        [28, 29],
         'ICBM 생산',
         'ICBM을 생산할 수 있습니다.',
         function (status) {
@@ -385,9 +375,9 @@ export const Skills = [
         }
     ),
     new Skill(
-        34,
+        33,
         3,
-        [33],
+        [32],
         '공장 생산 강화',
         '공장에서 유닛을 최대 2번 생산할 수 있습니다.',
         function (status) {
