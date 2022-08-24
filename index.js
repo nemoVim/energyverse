@@ -121,6 +121,9 @@ otSpace.on('connection', (socket) => {
         if (roomMap.get(roomId) !== undefined && roomMap.get(roomId).has(getNickName(socket))) {
             roomMap.get(roomId).set(getNickName(socket), false);
         }
+        if (checkAdmin(roomId, socket, '은정킴') && !roomMap.has(roomId)) {
+            adminMap.delete(roomId);
+        }
         nickNameMap.delete(socket.id);
         playerCnt -= 1;
     });

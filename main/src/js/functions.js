@@ -15,8 +15,9 @@
 
     function reloadRoomList() {
         socket.on('roomList', (msg) => {
-            let roomList = new Array(JSON.parse(msg))[0];
-            refreshRoomListDiv(roomList);
+            let newRoomList = new Array(JSON.parse(msg))[0];
+
+            refreshRoomListDiv(newRoomList);
         });
     }
 
@@ -29,22 +30,20 @@
         roomListDiv.innerHTML = '';
 
         for (let i = 0; i < roomList.length; i++) {
-            roomListDiv.append(makeRoomDiv(roomList[i]));
+            roomListDiv.append(makeRoomP(roomList[i]));
         }
     }
 
-    function makeRoomDiv(roomId) {
-        const roomDiv = document.createElement('div');
-        roomDiv.addEventListener('click', () => {
-            console.log('click!');
+    function makeRoomP(roomId) {
+        const roomP = document.createElement('p');
+        roomP.classList.add('roomP');
+        roomP.classList.add('shadow');
+        roomP.innerText = roomId;
+
+        roomP.addEventListener('click', () => {
             joinRoom(roomId);
         });
 
-        const roomTitle = document.createElement('h1');
-        roomTitle.innerText = '[' + roomId + ']';
-
-        roomDiv.append(roomTitle);
-
-        return roomDiv;
+        return roomP;
     }
 })();

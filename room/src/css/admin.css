@@ -1,0 +1,16 @@
+#teamsDiv_admin {
+    display: flex;
+    padding: 1rem;
+    flex-flow: wrap;
+}
+
+#adminDiv {
+    padding: 1rem 3rem;
+    background: white;
+    margin: 3rem;
+    border: solid 0.3rem;
+}
+
+#adminDiv button {
+    font-size: 2.5rem;
+}

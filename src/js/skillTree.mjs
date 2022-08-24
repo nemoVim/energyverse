@@ -102,7 +102,7 @@ export class SkillTree {
 
         const solarSkillBtn = document.createElement('button');
         solarSkillBtn.setAttribute('id', 'solarSkillBtn_' + this.#index);
-        solarSkillBtn.innerText = '태양광 스킬트리';
+        solarSkillBtn.innerText = '태양광 기술트리';
         solarSkillBtn.addEventListener('click', () => {
             this.#skillTreeDiv.classList.remove('hidden');
             this.#solarSkillTreeDiv.classList.remove('hidden');
@@ -110,7 +110,7 @@ export class SkillTree {
 
         const atomicSkillBtn = document.createElement('button');
         atomicSkillBtn.setAttribute('id', 'atomicSkillBtn_' + this.#index);
-        atomicSkillBtn.innerText = '원자력 스킬트리';
+        atomicSkillBtn.innerText = '원자력 기술트리';
         atomicSkillBtn.addEventListener('click', () => {
             this.#skillTreeDiv.classList.remove('hidden');
             this.#atomicSkillTreeDiv.classList.remove('hidden');
@@ -314,7 +314,7 @@ export class SkillTree {
                     e.preventDefault();
                 }
             } else {
-                e.preventDefault();
+                // e.preventDefault();
             }
         });
 
@@ -397,8 +397,8 @@ export class SkillTree {
             }
         });
 
-        console.log('--researchable--');
-        console.log(this.#researchable);
+        // console.log('--researchable--');
+        // console.log(this.#researchable);
     }
 
     research(index) {

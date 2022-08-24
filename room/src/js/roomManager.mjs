@@ -6,6 +6,8 @@ export class RoomManager {
     #name = '';
 
     constructor(_socket) {
+
+        document.getElementById('roomTitle').innerText = 'ROOM ' + this.getRoomId();
         this.#socket = _socket;
 
         this.addEventLeaveRoomBtn();
@@ -170,18 +172,15 @@ export class RoomManager {
         socketListDiv.innerHTML = '';
 
         for (let i = 0; i < socketList.length; i++) {
-            socketListDiv.append(this.makeSocketDiv(socketList[i]));
+            socketListDiv.append(this.makeSocketP(socketList[i]));
         }
     }
 
-    makeSocketDiv(socketId) {
-        const socketDiv = document.createElement('div');
+    makeSocketP(socketId) {
+        const socketP = document.createElement('p');
+        socketP.classList.add('socketP');
+        socketP.innerText = socketId;
 
-        const socketTitle = document.createElement('h1');
-        socketTitle.innerText = '[' + socketId + ']';
-
-        socketDiv.append(socketTitle);
-
-        return socketDiv;
+        return socketP;
     }
 }

@@ -1,6 +1,36 @@
-#titleDiv {
+body {
+    padding: 2rem;
+}
+
+hr {
+    height: 0.1rem;
+    border: outset 0.3rem white;
+}
+
+#titleP {
+    text-align: center;
+    font-size: 5rem;
+    color: white;
+    text-shadow: black 0 0 0.6rem;
+}
+
+#roomListDiv {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    flex-flow: wrap;
+    padding: 2rem;
+}
+
+.roomP {
+    background-color: white;
+    border: black 0.5rem solid;
+    border-radius: 2.5rem;
+    margin: 2rem;
+    width: fit-content;
+    padding: 3rem 8rem;
+    font-size: 4rem;
+}
+
+.roomP:hover {
+    cursor: pointer;
+    background: rgb(240, 240, 240);
 }

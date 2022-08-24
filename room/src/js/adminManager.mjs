@@ -203,6 +203,7 @@ export class AdminManager {
         }
 
         this.#adminUI.refresh();
+        this.#adminUI.turnChanged();
 
         Utils.showElement('nextBtn');
         Utils.showElement('previousBtn');
@@ -270,7 +271,7 @@ export class AdminManager {
             team.getTimer().setTime(0);
             this.#socket.emit('time', [0, index]);
         });
-        this.#socket.emit('turn', this.#turn);
+        this.#socket.emit('turn', [this.#turn, this.#firstTurn]);
         this.getNowTeam().start();
         this.#adminUI.turnChanged();
         this.#adminUI.notice(`${this.#teamNames[this.#turn]}팀의 턴이 시작되었습니다.`);
@@ -314,6 +315,10 @@ export class AdminManager {
 
     getWorld() {
         return this.#world;
+    }
+
+    getFirstTurn() {
+        return this.#firstTurn;
     }
 
     getFirstTurnName() {
@@ -505,6 +510,7 @@ export class AdminManager {
         this.calcEarn();
 
         this.#adminUI.refresh();
+        this.#adminUI.turnChanged();
 
         this.#socket.emit('saveUsers', this.makeUsersData());
         this.#socket.emit('saveWorld', this.makeWorldData());

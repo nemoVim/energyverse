@@ -1,6 +1,7 @@
 import { Buildings } from '../../../src/js/buildings.mjs';
 import { Units } from '../../../src/js/units.mjs';
 import { Utils } from '../../../src/js/utils.mjs';
+import { ClientTeamUI } from './clientTeamUI.mjs';
 
 export class AdminUI {
 
@@ -20,30 +21,10 @@ export class AdminUI {
     #initTeamsDiv() {
         this.#manager.getTeams().forEach((team, index) => {
 
-            const teamDiv = document.createElement('div');
-            teamDiv.setAttribute('id', 'teamDiv_'+index);
+            const teamDiv = ClientTeamUI.makeTeamDiv(team, index);
+            console.log(teamDiv);
 
-            const nameP = document.createElement('p');
-            nameP.setAttribute('id', 'nameP'+index);
-            nameP.innerText = team.getName();
-            
-            const earnP = document.createElement('p');
-            earnP.setAttribute('id', 'earnP_'+index);
-            
-            const energyP = document.createElement('p');
-            energyP.setAttribute('id', 'energyP_'+index);
-            
-            const scoreP = document.createElement('p');
-            scoreP.setAttribute('id', 'scoreP_'+index);
-
-            teamDiv.append(team.getTimer().getUI());
-            teamDiv.append(nameP);
-            teamDiv.append(earnP);
-            teamDiv.append(energyP);
-            teamDiv.append(scoreP);
-            teamDiv.append(team.getSkillTreeUI());
-
-            document.getElementById('teamsDiv').append(teamDiv);
+            document.getElementById('teamsDiv_admin').append(teamDiv);
 
             team.getSkillTree().initDone();
         });
@@ -109,10 +90,11 @@ export class AdminUI {
     }
 
     turnChanged() {
-        document.querySelectorAll('div[id^=teamDiv_').forEach(div => {
-            div.style.borderStyle = 'none';
-        })
-        document.getElementById('teamDiv_'+this.#manager.getNowTeam().getIndex()).style.border = 'solid black 0.1rem';
+        document.querySelectorAll('p[id^=nameP_]').forEach(nameP => {
+            nameP.style.backgroundColor = 'white';
+        });
+        document.getElementById('nameP_'+this.#manager.getFirstTurn()).style.backgroundColor = 'rgb(255, 190, 170)';
+        document.getElementById('nameP_'+this.#manager.getNowTeam().getIndex()).style.backgroundColor = 'rgb(190, 220, 255)';
     }
 
     refresh() {
@@ -122,9 +104,7 @@ export class AdminUI {
 
     #refreshTeamsDiv() {
         this.#manager.getTeams().forEach((team, index) => {
-            document.getElementById('earnP_'+index).innerText = `발전량: ${team.getEarn()}`;
-            document.getElementById('energyP_'+index).innerText = `에너지: ${team.getEnergy()}`;
-            document.getElementById('scoreP_'+index).innerText = `점수: ${team.getScore()}`;
+            ClientTeamUI.refreshTeamDiv(team, index);
         });
     }
 
@@ -278,10 +258,14 @@ class AdminBtns {
         });
 
         document.getElementById('nextBtn').addEventListener('click', (e) => {
+            Utils.hideElement('settleBtn');
+            Utils.hideElement('startRoundBtn');
             this.#manager.next();
         });
 
         document.getElementById('previousBtn').addEventListener('click', (e) => {
+            Utils.hideElement('settleBtn');
+            Utils.hideElement('startRoundBtn');
             this.#manager.previous();
         });
 

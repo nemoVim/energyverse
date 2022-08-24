@@ -1,18 +1,181 @@
-input[type=range]:disabled {
-    -webkit-appearance: none;
-    height: 2rem;
-    background-color: linear-gradient(to right, green 0%, green 0%, rgb(255, 255, 255) 45%, white 100%);
+.slider {
+    border-radius: 1.5rem;
+    text-align: center;
+    padding: .5rem;
+    margin: 2rem;
+    background-color: white;
+    border: solid .3rem;
 }
 
-input[type=range]:disabled::-webkit-slider-thumb {
-    display: none;
-    background-color: orange;
-    width: 2rem;
-    height: 2rem;
+#roundP {
+    color: dodgerblue;
+    font-size: 2.5rem;
 }
 
-input[type=range]:disabled::-webkit-slider-runnable-track {
+#tempP {
+    color: orangered;
+    font-size: 2.5rem;
+}
+
+/* -------------------------------------- */
+
+#readyP, #waitP, #endP {
+    font-size: 5rem;
+    color: white;
+    text-shadow: black 0 0 0.6rem;
+}
+
+/* -------------------------------------- */
+
+#previousTeamsDiv, #nextTeamsDiv {
+    margin: 3rem;
+    flex-flow: wrap;
+}
+
+/* -------------------------------------- */
+
+#nameP {
+    margin: 0;
+    padding: 0.8rem 6rem;
+    border: solid .3rem black;
+    border-radius: 2rem;
+    position: relative;
+    right: -30%;
+    top: 1.5rem;
+    font-size: 3rem;
+    background: white;
+}
+
+#thisTeamDiv > div {
+    border: solid black .3rem;
+    border-radius: 2rem;
+    background-color: white;
+    overflow: hidden;
+}
+
+#timerP {
+    border: none;
+    border-radius: 0;
+    border-bottom: solid .3rem;
+    box-sizing: border-box;
     width: 100%;
-    height: 100%;
-    border: black solid .1rem;
+    margin: 0;
+    color: limegreen;
+    padding: 1.2rem;
+    font-size: 2.5rem;
+}
+
+#energyP {
+    font-size: 5rem;
+    color: orange;
+    margin: 4rem 10rem;
+    text-align: center;
+    min-width: max-content;
+}
+
+#scoreP {
+    font-size: 4rem;
+    color: black;
+    margin: 0;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+#thisTeamDiv > div > div {
+    margin: 0rem;
+    width: 100%;
+    border-top: solid 0.3rem;
+    padding: 0.5rem;
+}
+
+#thisTeamDiv > div > div button {
+    font-size: 2.5rem;
+    background-color: white;
+    padding: 1rem 2.5rem;
+    border: solid 0.3rem;
+    border-radius: 1.5rem;
+    margin: 1rem 1rem;
+}
+
+#thisTeamDiv > div > div button:hover {
+    cursor: pointer;
+    background-color: rgb(240, 240, 240);
+}
+
+div[id^=teamDiv_] {
+    margin: 2rem;
+}
+
+p[id^=nameP_] {
+    margin: 0;
+    padding: 0.3rem 2.5rem;
+    border: solid .3rem black;
+    border-radius: 1rem;
+    position: relative;
+    right: -30%;
+    top: 1rem;
+    font-size: 1.6rem;
+    background: white;
+}
+
+div[id^=teamDiv_] > div {
+    border: solid black .3rem;
+    border-radius: 1.5rem;
+    background-color: white;
+    overflow: hidden;
+}
+
+p[id^=timerP_] {
+    border: none;
+    border-radius: 0;
+    border-bottom: solid .3rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    color: limegreen;
+    padding: 0.6rem;
+    font-size: 1.6rem;
+}
+
+p[id^=energyP_] {
+    font-size: 2.3rem;
+    color: orange;
+    margin: 1rem 4rem;
+    text-align: center;
+    min-width: max-content;
+}
+
+p[id^=scoreP_] {
+    font-size: 2rem;
+    color: black;
+    margin: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+div[id^=teamDiv_] > div > div {
+    margin: 0rem;
+    width: 100%;
+    border-top: solid 0.3rem;
+}
+
+div[id^=teamDiv_] > div > div > div > button {
+    font-size: 1.6rem;
+    padding: 0.7rem 2rem;
+    border-radius: 1rem;
+    margin: 0.5rem;
+}
+
+div[id^=teamDiv_] > div > div button {
+    font-size: 2.5rem;
+    background-color: white;
+    padding: 1rem 2.5rem;
+    border: solid 0.3rem;
+    border-radius: 1.5rem;
+    margin: 1rem 1rem;
+}
+
+div[id^=teamDiv_] > div > div button:hover {
+    cursor: pointer;
+    background-color: rgb(240, 240, 240);
 }

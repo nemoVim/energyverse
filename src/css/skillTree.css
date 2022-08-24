@@ -5,10 +5,11 @@
 
 .lineDiv > hr {
     width: -webkit-fill-available;
-    height: 0.2rem;
-    border: white 0.2rem outset;
+    height: 0.3rem;
+    border: black 0.3rem solid;
     background-color: white;
 }
+
 div[id^=skillTreeDiv_] {
     justify-content: flex-start;
     padding-top: 10vh;
@@ -17,14 +18,17 @@ div[id^=skillTreeDiv_] {
 .skillDiv {
     margin: 1.3rem;
     height: fit-content;
-    border-radius: .5rem;
+    border-radius: 1rem;
     background-color: white;
-    box-shadow: grey 0rem 0.1rem 0.5rem 0.1rem;
     position: relative;
+    border: solid 0.3rem;
+}
+
+.skillDiv:hover {
+    cursor: pointer;
 }
 
 .skillDiv.focused {
-    box-shadow: grey 0rem 0.5rem 1rem 0.1rem !important;
     margin: .3rem !important;
     padding: .3rem !important;
     top: -0.5rem;

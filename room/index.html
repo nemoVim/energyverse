@@ -11,22 +11,25 @@
         <link rel="stylesheet" href="/src/css/game.css" />
         <link rel="stylesheet" href="/room/src/css/style.css" />
         <link rel="stylesheet" href="/room/src/css/client.css" />
+        <link rel="stylesheet" href="/room/src/css/admin.css" />
     </head>
     <body>
         <!-- <a href="https://www.flaticon.com/kr/free-icons/" title="육각형 아이콘"
             >육각형 아이콘 제작자: Pixel perfect - Flaticon</a
         > -->
 
-        <div id="roomDiv">
-            <h1 id="roomTitle"></h1>
+        <div id="roomDiv" class="container">
+            <div class="shadow container-col">
+                <h1 id="roomTitle"></h1>
 
-            <button id="leaveRoomBtn">방 나가기</button>
+                <div id="socketListDiv" class="container-col"></div>
 
-            <p>접속자 목록</p>
-            <div id="socketListDiv"></div>
+                <button id="leaveRoomBtn">방 나가기</button>
 
-            <div id="roomController" class="hidden">
-                <button id="readyBtn">게임 시작</button>
+                <div id="roomController" class="hidden">
+                    <button id="readyBtn">게임 시작</button>
+                </div>
+
             </div>
         </div>
 
@@ -49,18 +52,29 @@
 
         <div id="gameDiv" class="hidden">
             <div id="clientDiv" class="hidden">
-                <div id="thisTeamDiv">
-                    <button id="turnEndBtn" class="hidden">턴 종료</button>
-                    <p id="roundP"></p>
-                    <p id="turnP"></p>
-                    <p id="tempP"></p>
-                    <hr>
-                    <p id="nameP"></p>
-                    <p id="earnP"></p>
-                    <p id="energyP"></p>
-                    <p id="scoreP"></p>
+                <p id="roundP" class="slider shadow"></p>
+                <p id="tempP" class="slider shadow"></p>
+
+                <div id="teamsDiv" class="container">
+                    <div id="previousTeamsDiv" class="container-col"></div>
+
+                    <div id="thisTeamDiv" class="container-col">
+                        <p id="nameP" class="shadow"></p>
+                        <div class="container-col shadow">
+                            <p id="timerP" class="slider"></p>
+                            <p id="energyP"></p>
+                            <p id="scoreP"></p>
+                            <div class="container">
+                                <button id="turnEndBtn" class="hidden">턴 종료</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="nextTeamsDiv" class="container-col"></div>
                 </div>
-                <hr>
+
+                <p id="noticeP"></p>
+
                 <div id="otherTeamsDiv"></div>
             </div>
 
@@ -135,7 +149,7 @@
                 <hr>
                 <p id="consoleP"></p>
                 <hr>
-                <div id="teamsDiv"></div>
+                <div id="teamsDiv_admin"></div>
             </div>
         </div>
 

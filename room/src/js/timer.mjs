@@ -1,11 +1,6 @@
 export class Timer {
 
-    #index;
-
-    constructor(_index) {
-        // this.#index = _index;
-        this.initUI();
-        this.refreshUI();
+    constructor() {
     }
 
     #time = 0;
@@ -46,35 +41,15 @@ export class Timer {
         clearInterval(this.#interval);
     }
 
-    #timerDiv;
-    #timeSlider;
-    #timeP;
+    #timerP;
 
-    initUI() {
-        this.#timerDiv = document.createElement('div');
-
-        this.#timeSlider = document.createElement('input');
-        this.#timeSlider.setAttribute('type', 'range');
-        this.#timeSlider.setAttribute('min', 0);
-        this.#timeSlider.setAttribute('max', 100);
-        this.#timeSlider.setAttribute('step', 1);
-        this.#timeSlider.disabled = true;
-
-        this.#timeP = document.createElement('p');
-
-        this.#timerDiv.append(this.#timeSlider);
-        this.#timerDiv.append(this.#timeP);
+    setTimerP(_timerP) {
+        this.#timerP = _timerP;
+        this.refreshUI();
     }
 
     refreshUI() {
-        this.#timeSlider.value = this.#time;
-        this.#timeP.innerText = `${this.#time}초`;
-        this.#timeSlider.style.background = 'linear-gradient(to right, green 0%, green '+this.#time +'%, #fff ' + this.#time + '%, white 100%)';
+        this.#timerP.innerText = `${this.#time}초`;
+        this.#timerP.style.background = 'linear-gradient(to right, rgb(190, 240, 190) 0%, rgb(190, 240, 190) '+this.#time +'%, #fff ' + this.#time + '%, white 100%)';
     }
-
-    getUI() {
-        return this.#timerDiv;
-    }
-
-
 }

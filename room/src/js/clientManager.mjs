@@ -1,5 +1,6 @@
 import { Temperature } from '../../../src/js/temperature.mjs';
 import { ClientTeam } from './clientTeam.mjs';
+import { ClientTeamUI } from './clientTeamUI.mjs';
 
 export class ClientManager {
 
@@ -50,8 +51,9 @@ export class ClientManager {
             this.#endGame();
         });
 
-        this.#socket.on('turn', (teamIndex) => {
-            this.#turnChanged(teamIndex);
+        this.#socket.on('turn', (config) => {
+            // [teamIndex, firstTurn]
+            this.#turnChanged(config);
         });
 
         this.#socket.on('modify', (config) => {
@@ -100,7 +102,7 @@ export class ClientManager {
     // ------------------------------------------------
 
     #reSetting(config) {
-        // [teamNameList, earn, energy, score, researching, learned, time, nowTurn, temperature, round];
+        // [teamNameList, earn, energy, score, researching, learned, time, nowTurn, temperature, round, firstTurn];
         console.log(config);
 
         this.#ready();
@@ -117,7 +119,7 @@ export class ClientManager {
         });
 
         if (Number(config[7]) !== -1) {
-            this.#turnChanged(Number(config[7]));
+            this.#turnChanged([config[7], config[10]]);
         } else {
             document.getElementById('waitDiv').classList.remove('hidden');
         }
@@ -166,46 +168,29 @@ export class ClientManager {
         document.getElementById('gameDiv').classList.remove('hidden');
         document.getElementById('clientDiv').classList.remove('hidden');
 
-        document.getElementById('thisTeamDiv').append(this.#teams[this.#index].getSkillTreeUI());
-        this.#teams[this.#index].getSkillTree().initDone();
-
-        document.getElementById('nameP').before(this.#teams[this.#index].getTimer().getUI());
-
         document.getElementById('nameP').innerText = this.#teams[this.#index].getName();
+
+        this.#teams[this.#index].getTimer().setTimerP(document.getElementById('timerP'));
+
+        document.querySelector('#thisTeamDiv > div > div').prepend(this.#teams[this.#index].getSkillTreeUI());
+        this.#teams[this.#index].getSkillTree().initDone();
 
         document.getElementById('turnEndBtn').addEventListener('click', () => {
             this.#turnEnd();
-        })
+        });
+
 
         this.#teams.forEach((team, index) => {
             if (index === this.#index)
                 return;
             
-            const teamDiv = document.createElement('div');
-            teamDiv.setAttribute('id', 'teamDiv_'+index);
+            const teamDiv = ClientTeamUI.makeTeamDiv(team, index);
 
-            const nameP = document.createElement('p');
-            nameP.setAttribute('id', 'nameP'+index);
-            nameP.innerText = team.getName();
-            
-            const earnP = document.createElement('p');
-            earnP.setAttribute('id', 'earnP_'+index);
-            
-            const energyP = document.createElement('p');
-            energyP.setAttribute('id', 'energyP_'+index);
-            
-            const scoreP = document.createElement('p');
-            scoreP.setAttribute('id', 'scoreP_'+index);
-
-            teamDiv.append(team.getTimer().getUI());
-
-            teamDiv.append(nameP);
-            teamDiv.append(earnP);
-            teamDiv.append(energyP);
-            teamDiv.append(scoreP);
-            teamDiv.append(team.getSkillTreeUI());
-
-            document.getElementById('otherTeamsDiv').append(teamDiv);
+            if (index < this.#index) {
+                document.getElementById('previousTeamsDiv').append(teamDiv);
+            } else if (index > this.#index) {
+                document.getElementById('nextTeamsDiv').append(teamDiv);
+            }
 
             team.getSkillTree().initDone();
         });
@@ -221,6 +206,17 @@ export class ClientManager {
     #endGame() {
         document.getElementById('waitDiv').classList.add('hidden');
         document.getElementById('endDiv').classList.remove('hidden');
+        let thisTeam = 1;
+        this.#teams.forEach(team => {
+            if (this.#index === team.getIndex())
+                return;
+            
+            if (team.getScore() > this.#teams[this.#index].getScore()) {
+                thisTeam += 1;
+            }
+        });
+
+        alert(`${thisTeam}등!`);
     }
 
     // -----------------------------------------------
@@ -243,17 +239,36 @@ export class ClientManager {
         }
     }
 
-    #turnChanged(teamIndex) {
+    #turnChanged(config) {
+
         document.getElementById('waitDiv').classList.add('hidden');
+
+        const teamIndex = Number(config[0]);
+        const firstTurn = Number(config[1]);
+
+        document.querySelectorAll('p[id^=nameP]').forEach(nameP => {
+            nameP.style.backgroundColor = 'white';
+        });
+
+        console.log(firstTurn);
+
+        if (firstTurn === this.#index) {
+            document.getElementById(`nameP`).style.backgroundColor = 'rgb(255, 190, 170)';
+        } else {
+            document.getElementById(`nameP_${firstTurn}`).style.backgroundColor = 'rgb(255, 190, 170)';
+        }
+
         if (teamIndex === this.#index) {
             this.#isMyTurn = true;
             document.getElementById('turnEndBtn').classList.remove('hidden');
+            document.getElementById(`nameP`).style.backgroundColor = 'rgb(190, 220, 255)';
         } else {
             this.#isMyTurn = false;
             document.getElementById('turnEndBtn').classList.add('hidden');
+            document.getElementById(`nameP_${teamIndex}`).style.backgroundColor = 'rgb(190, 220, 255)';
         }
+
         this.#refreshUIs();
-        document.getElementById('turnP').innerText = `${this.#teams[teamIndex].getName()}의 차례입니다.`;
     }
 
     #modify(config) {
@@ -309,16 +324,29 @@ export class ClientManager {
     #refreshUIs() {
         this.#refreshThisTeamUI();
         this.#refreshOtherTeamsUI();
-        document.getElementById('roundP').innerText = this.#round + '번째 라운드';
+
+        document.getElementById('roundP').innerText = this.#round + ' ROUND';
+        const roundPer = ((this.#round/20)*100).toFixed(1);
+        if (roundPer > 100) {
+            roundPer = 100;
+        }
+        document.getElementById('roundP').style.background = `linear-gradient(to right, rgb(190, 220, 255) 0%, rgb(190, 220, 255) ${roundPer}%, white ${roundPer}%, white 100%)`;
+
+        const tempPer = ((this.#temp.getTemp()-14)/7*100).toFixed(1);
+        if (tempPer > 100) {
+            tempPer = 100;
+        } else if (tempPer < 0) {
+            tempPer = 0;
+        }
+        document.getElementById('tempP').innerText = `${this.#temp.getTemp()} °C`;
+        document.getElementById('tempP').style.background= `linear-gradient(to right, rgb(255, 190, 170) 0%, rgb(255, 190, 170) ${tempPer}%, white ${tempPer}%, white 100%)`;
     }
 
     #refreshThisTeamUI() {
         const team = this.#teams[this.#index];
         // TODO: Add turn mark element
-        document.getElementById('tempP').innerText = `${this.#temp.getTemp()} °C`;
-        document.getElementById('earnP').innerText = `발전량: ${team.getEarn()}`;
-        document.getElementById('energyP').innerText = `에너지: ${team.getEnergy()}`;
-        document.getElementById('scoreP').innerText = `점수: ${team.getScore()}`;
+        document.getElementById('energyP').innerText = `${team.getEnergy()}(+${team.getEarn()}) E`;
+        document.getElementById('scoreP').innerText = `${team.getScore()}점`;
     }
 
     #refreshOtherTeamsUI() {
@@ -326,9 +354,7 @@ export class ClientManager {
             if (index === this.#index)
                 return;
 
-            document.getElementById('earnP_'+index).innerText = `발전량: ${team.getEarn()}`;
-            document.getElementById('energyP_'+index).innerText = `에너지: ${team.getEnergy()}`;
-            document.getElementById('scoreP_'+index).innerText = `점수: ${team.getScore()}`;
+            ClientTeamUI.refreshTeamDiv(team, index);
         });
     }
 }
