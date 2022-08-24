@@ -56,7 +56,7 @@ export class Timer {
         this.#timeSlider = document.createElement('input');
         this.#timeSlider.setAttribute('type', 'range');
         this.#timeSlider.setAttribute('min', 0);
-        this.#timeSlider.setAttribute('max', 90);
+        this.#timeSlider.setAttribute('max', 100);
         this.#timeSlider.setAttribute('step', 1);
         this.#timeSlider.disabled = true;
 
@@ -69,6 +69,7 @@ export class Timer {
     refreshUI() {
         this.#timeSlider.value = this.#time;
         this.#timeP.innerText = `${this.#time}초`;
+        this.#timeSlider.style.background = 'linear-gradient(to right, green 0%, green '+this.#time +'%, #fff ' + this.#time + '%, white 100%)';
     }
 
     getUI() {

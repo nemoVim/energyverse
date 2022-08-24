@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="/src/css/skillTree.css" />
         <link rel="stylesheet" href="/src/css/game.css" />
         <link rel="stylesheet" href="/room/src/css/style.css" />
+        <link rel="stylesheet" href="/room/src/css/client.css" />
     </head>
     <body>
         <!-- <a href="https://www.flaticon.com/kr/free-icons/" title="육각형 아이콘"
@@ -70,6 +71,7 @@
 
                     <p id="roundP_admin"></p>
                     <p id="tempP_admin"></p>
+                    <p id="firstP_admin"></p>
 
                     <button id="buildBtn">건설</button>
                     <div id="buildDiv" class="hidden back">
@@ -108,18 +110,30 @@
                     </div>
                 </div>
 
+                <hr>
+
                 <div id="functionDiv">
-                    <button id="showWorldBtn">맵 보기</button>
-                    <button id="modifyEnergyBtn">현재 팀의 에너지 변경</button>
-                    <button id="modifyScoreBtn">현재 팀의 점수 변경</button>
-                    <button id="cancelBtn" class="hidden">가장 최근 행동 취소</button>
-                    <button id="previousBtn" class="hidden">이전 턴</button>
-                    <button id="nextBtn" class="hidden">다음 턴</button>
-                    <button id="endBtn" class="hidden">현재 턴 종료</button>
-                    <button id="settleBtn" class="hidden">정산하기</button>
-                    <button id="startRoundBtn">라운드 시작</button>
-                    <button id="endGameBtn">게임 종료</button>
+                    <div>
+                        <button id="previousBtn" class="hidden">이전 턴</button>
+                        <button id="nextBtn" class="hidden">다음 턴</button>
+                        <button id="endBtn" class="hidden">현재 턴 종료</button>
+                        <button id="settleBtn" class="hidden">정산하기</button>
+                        <button id="startRoundBtn">라운드 시작</button>
+                        <button id="endGameBtn" class="hidden">게임 종료</button>
+                    </div>
+                    <hr>
+                    <div>
+                        <button id="showWorldBtn">맵 보기</button>
+                        <button id="adminDestroyUnitBtn">유닛 파괴</button>
+                        <div id="adminDestroyUnitDiv" class="hidden back"></div>
+                        <button id="modifyTempBtn">온도 변경</button>
+                        <button id="modifyEnergyBtn">현재 팀의 에너지 변경</button>
+                        <button id="modifyScoreBtn">현재 팀의 점수 변경</button>
+                        <button id="cancelBtn" class="hidden">가장 최근 행동 취소</button>
+                    </div>
                 </div>
+                <hr>
+                <p id="consoleP"></p>
                 <hr>
                 <div id="teamsDiv"></div>
             </div>

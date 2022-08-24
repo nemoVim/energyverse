@@ -88,6 +88,11 @@ export class AdminUI {
             if (e.target.id !== 'destroyUnitDiv') return;
             Utils.hideElement('destroyUnitDiv');
         });
+
+        document.getElementById('adminDestroyUnitDiv').addEventListener('click', (e) => {
+            if (e.target.id !== 'adminDestroyUnitDiv') return;
+            Utils.hideElement('adminDestroyUnitDiv');
+        });
     }
 
     readyDone() {
@@ -126,6 +131,11 @@ export class AdminUI {
     #refreshInfo() {
         document.getElementById('tempP_admin').innerText = `${this.#manager.getTemp().getTemp()} °C`;
         document.getElementById('roundP_admin').innerText = `${this.#manager.getRound()}번째 라운드`;
+        document.getElementById('firstP_admin').innerText = `선: ${this.#manager.getFirstTurnName()}`;
+    }
+
+    notice(msg) {
+        document.getElementById('consoleP').innerText = msg;
     }
 
 }
@@ -197,22 +207,27 @@ class AdminBtns {
 
         document.getElementById('probeBtn').addEventListener('click', (e) => {
             this.#manager.produce('probe');
+            Utils.hideElement('produceDiv');
         });
 
         document.getElementById('windUnitBtn').addEventListener('click', (e) => {
             this.#manager.produce('windUnit');
+            Utils.hideElement('produceDiv');
         });
 
         document.getElementById('solarUnitBtn').addEventListener('click', (e) => {
             this.#manager.produce('solarUnit');
+            Utils.hideElement('produceDiv');
         });
 
         document.getElementById('atomicUnitBtn').addEventListener('click', (e) => {
             this.#manager.produce('atomicUnit');
+            Utils.hideElement('produceDiv');
         });
 
         document.getElementById('missileBtn').addEventListener('click', (e) => {
             this.#manager.produce('missile');
+            Utils.hideElement('produceDiv');
         });
 
         // ------------------------------------------
@@ -252,6 +267,10 @@ class AdminBtns {
 
     #initFunctionBtns() {
 
+        document.getElementById('adminDestroyUnitBtn').addEventListener('click', () => {
+            this.#clickAdminDestroyUnitBtn();
+        });
+
         document.getElementById('startBtn').addEventListener('click', () => {
             document.getElementById('readyDiv').classList.add('hidden');
             document.getElementById('startBtn').classList.add('hidden');
@@ -266,16 +285,24 @@ class AdminBtns {
             this.#manager.previous();
         });
 
+        document.getElementById('modifyTempBtn').addEventListener('click', (e) => {
+            let delta = prompt('온도 변화량을 입력하세요.');
+            if (delta == null || delta === '' || delta.match(/^-?[0-9]+$/) === null) return;
+
+            this.#manager.getTemp().modifyTemp(Number(delta));
+            this.#manager.getUI().refresh();
+        });
+
         document.getElementById('modifyEnergyBtn').addEventListener('click', (e) => {
-            let delta = prompt('변화량을 입력하세요.');
-            if (delta == null || delta === '') return;
+            let delta = prompt('에너지 변화량을 입력하세요.');
+            if (delta == null || delta === '' || delta.match(/^-?[0-9]+$/) === null) return;
 
             this.#manager.modify('energy', Number(delta));
         });
 
         document.getElementById('modifyScoreBtn').addEventListener('click', (e) => {
-            let delta = prompt('변화량을 입력하세요.');
-            if (delta == null || delta === '') return;
+            let delta = prompt('점수 변화량을 입력하세요.');
+            if (delta == null || delta === '' || delta.match(/^-?[0-9]+$/) === null) return;
 
             this.#manager.modify('score', Number(delta));
         });
@@ -298,7 +325,6 @@ class AdminBtns {
             Utils.showElement('nextBtn');
             Utils.showElement('previousBtn');
             Utils.showElement('endBtn');
-            Utils.showElement('settleBtn');
             Utils.hideElement('startRoundBtn');
         });
 
@@ -414,7 +440,17 @@ class AdminBtns {
         Utils.showElement('destroyUnitDiv');
         const destroyUnitDiv = document.getElementById('destroyUnitDiv');
         destroyUnitDiv.innerHTML = '';
+        this.#addDestroyUnitDiv(destroyUnitDiv, false)
+    }
 
+    #clickAdminDestroyUnitBtn() {
+        Utils.showElement('adminDestroyUnitDiv');
+        const destroyUnitDiv = document.getElementById('adminDestroyUnitDiv');
+        destroyUnitDiv.innerHTML = '';
+        this.#addDestroyUnitDiv(destroyUnitDiv, true)
+    }
+
+    #addDestroyUnitDiv(destroyUnitDiv, isAdmin) {
         this.#manager.getTeams().forEach(team => {
 
             const unitTeamBtn = document.createElement('button');
@@ -441,7 +477,12 @@ class AdminBtns {
                 unitBtn.innerText = unit.getName();
 
                 unitBtn.addEventListener('click', () => {
-                    this.#manager.destroyUnit(unit);
+                    if (isAdmin) {
+                        team.destroyed(unit);
+                    } else {
+                        this.#manager.destroyUnit(unit);
+                    }
+                    Utils.addHidden(unitBtn);
                 });
 
                 unitTeamDiv.append(unitBtn);
@@ -451,6 +492,7 @@ class AdminBtns {
             destroyUnitDiv.append(unitTeamDiv);
 
         });
+
     }
 
     #clickResearchBtn() {

@@ -342,6 +342,6 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/main/index.html');
 });
 
-app.get('/room/[0-9]+', (req, res) => {
+app.get('/room/[A-Z]+', (req, res) => {
     res.sendFile(__dirname + '/room/index.html');
 });

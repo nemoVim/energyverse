@@ -71,7 +71,7 @@ export class RoomManager {
     }
 
     getRoomId() {
-        const roomId = Number(location.href.split('/').pop());
+        const roomId = (location.href.split('/').pop());
         return roomId;
     }
 

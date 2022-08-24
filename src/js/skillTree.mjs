@@ -145,7 +145,7 @@ export class SkillTree {
         );
         defaultSkillTreeDiv.setAttribute('id', 'defaultSkillTreeDiv_' + this.#index);
         defaultSkillTreeDiv.classList.add('hidden');
-        defaultSkillTreeDiv.classList.add('back');
+        // defaultSkillTreeDiv.classList.add('back');
         this.#defaultSkillTreeDiv = defaultSkillTreeDiv;
 
         const windSkillTreeDiv = this.#createSkillTreeDiv(
@@ -153,7 +153,7 @@ export class SkillTree {
         );
         windSkillTreeDiv.setAttribute('id', 'windSkillTreeDiv_' + this.#index);
         windSkillTreeDiv.classList.add('hidden');
-        windSkillTreeDiv.classList.add('back');
+        // windSkillTreeDiv.classList.add('back');
         this.#windSkillTreeDiv = windSkillTreeDiv;
 
         const solarSkillTreeDiv = this.#createSkillTreeDiv(
@@ -164,7 +164,7 @@ export class SkillTree {
             'solarSkillTreeDiv_' + this.#index
         );
         solarSkillTreeDiv.classList.add('hidden');
-        solarSkillTreeDiv.classList.add('back');
+        // solarSkillTreeDiv.classList.add('back');
         this.#solarSkillTreeDiv = solarSkillTreeDiv;
 
         const atomicSkillTreeDiv = this.#createSkillTreeDiv(
@@ -175,7 +175,7 @@ export class SkillTree {
             'atomicSkillTreeDiv_' + this.#index
         );
         atomicSkillTreeDiv.classList.add('hidden');
-        atomicSkillTreeDiv.classList.add('back');
+        // atomicSkillTreeDiv.classList.add('back');
         this.#atomicSkillTreeDiv = atomicSkillTreeDiv;
 
         skillTreeUI.append(skillBtnDiv);

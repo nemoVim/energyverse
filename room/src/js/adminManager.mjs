@@ -77,20 +77,16 @@ export class AdminManager {
             this.#adminUI.readyDone();
 
             this.#socket.removeAllListeners('socketList');
+
+            this.#socket.emit('saveUsers', this.makeUsersData());
+            this.#socket.emit('saveWorld', this.makeWorldData());
         });
     }
 
     #addListeners() {
 
-        this.#socket.on('turnEnd', () => {
-            if (this.#turn === this.getPreviousIndex(this.#firstTurn)) {
-                this.settle();
-            } else {
-                this.next();
-            }
-        });
-
         this.#socket.on('wait', teamIndex => {
+            this.#adminUI.notice(`${this.#teamNames[teamIndex]}팀의 턴이 종료됐습니다.`);
             this.#teams[teamIndex].getTimer().stop();
             this.#teams[teamIndex].getTimer().setTime(0);
         });
@@ -195,13 +191,16 @@ export class AdminManager {
         });
 
         config[2].forEach((teamUnits, teamIndex) => {
+            this.#teams[teamIndex].getUnits().pop();
             teamUnits.forEach(unitType => {
                 const unit = new Units[unitType](teamIndex);
                 this.#teams[teamIndex].getUnits().push(unit);
             });
         });
 
-        this.calcEarn();
+        if (this.#firstTurn === -1) {
+            this.calcEarn();
+        }
 
         this.#adminUI.refresh();
 
@@ -252,6 +251,7 @@ export class AdminManager {
     next() {
         if (this.#turn === this.getPreviousIndex(this.#firstTurn)) {
             if (!confirm('현재 플레이어가 현 라운드의 마지막 플레이어입니다. 턴을 넘기시겠습니까?')) {
+                Utils.showElement('settleBtn');
                 return;
             }
         }
@@ -273,6 +273,7 @@ export class AdminManager {
         this.#socket.emit('turn', this.#turn);
         this.getNowTeam().start();
         this.#adminUI.turnChanged();
+        this.#adminUI.notice(`${this.#teamNames[this.#turn]}팀의 턴이 시작되었습니다.`);
     }
 
     endTurn() {
@@ -313,6 +314,10 @@ export class AdminManager {
 
     getWorld() {
         return this.#world;
+    }
+
+    getFirstTurnName() {
+        return this.#teamNames[this.#firstTurn];
     }
 
     emit(name, config) {
@@ -489,7 +494,7 @@ export class AdminManager {
 
         const _seaLevel = parseInt(Math.floor((this.#temp.getTemp()-Temperature.initialTemp)*10/5));
         if (this.#seaLevel < _seaLevel) {
-            console.log(`물이 ${_seaLevel-this.#seaLevel}칸 올랐습니다!`);
+            this.#adminUI.notice(`물이 ${_seaLevel-this.#seaLevel}칸 올랐습니다!`);
             this.#seaLevel = _seaLevel;
             this.rise();
         }

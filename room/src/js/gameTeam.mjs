@@ -336,7 +336,7 @@ export class GameTeam extends ClientTeam {
     // ---------------------------------
 
     start() {
-        super.getTimer().setTime(90);
+        super.getTimer().setTime(100);
         super.getTimer().setFunc(() => {
             this.#manager.emit('time', [super.getTimer().getTime(), super.getIndex()]);
         });
