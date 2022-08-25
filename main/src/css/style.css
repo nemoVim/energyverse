@@ -9,9 +9,8 @@ hr {
 
 #titleP {
     text-align: center;
-    font-size: 5rem;
-    color: white;
-    text-shadow: black 0 0 0.6rem;
+    font-size: 6rem;
+    color: black;
 }
 
 #roomListDiv {
