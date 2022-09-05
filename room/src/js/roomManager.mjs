@@ -39,15 +39,18 @@ export class RoomManager {
         return new Promise((resolve, reject) => {
 
             let nickname = '';
+            while (nickname.length !== 2 || nickname.match(/.{2}/) === null) {
+                nickname = prompt('팀 이름을 입력하세요.');
+            }
 
-            nickname = prompt('name?');
+            // // nickname = prompt('name?');
             // if (!this.checkNickname()) {
             //     while (nickname.length !== 2 || nickname.match(/.{2}/) === null) {
             //         nickname = prompt('팀 이름을 입력하세요.');
             //     }
-            //     document.cookie = nickname;
+            //     // document.cookie = nickname;
             // } else {
-            //     nickname = document.cookie;
+            //     // nickname = document.cookie;
             // }
 
             this.#socket.emit('setNickName', nickname);
