@@ -1,12 +1,24 @@
 <script>
     import { Tilemap } from '$lib/classes/tilemap';
-    import spawn from '$lib/assets/spawn.png';
+    import tile from '$lib/assets/tile.png';
     import { getPositionStyle } from '$lib/utils/posFunctions';
+    import { createEventDispatcher } from 'svelte';
 
-    export let clickedUnit;
+    export let game;
+    export let clickedUnit = null;
     $: validMovePosList = makeValidMovePosList(clickedUnit);
 
+    const dispatch = createEventDispatcher();
+
+    function changeGame() {
+        dispatch('game', {
+            game: game.gameObj,
+        });
+    }
+
     function makeValidMovePosList(unit) {
+        if (unit === null) return [];
+
         let posList = [unit];
 
         if (unit.en === 'probe') {
@@ -83,7 +95,7 @@
             game.unitList.splice(game.unitList.indexOf(entity), 1);
         }
         validMovePosList = [];
-        game = new Game(game.gameObj);
+        changeGame();
     }
 </script>
 
@@ -94,14 +106,26 @@
             style={getPositionStyle(pos)}
             on:click={() => clickToMove(validMovePosList[0], pos)}
         >
-            <img src={spawn} alt="alt" />
+            <img src={tile} alt="alt" />
         </button>
     {/if}
 {/each}
 
 <style>
+
+    .tile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
     .move > img {
-        width: 1rem;
-        margin: 1rem;
+        width: 2rem;
+        margin: .433rem .5rem;
     }
 </style>

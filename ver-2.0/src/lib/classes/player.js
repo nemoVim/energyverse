@@ -17,7 +17,7 @@ export class Player {
     #tech;
     #fuel;
 
-    constructor(index, energy, unitList, buildingList, tilemap) {
+    constructor(index, energy, unitList, buildingList, world) {
 
         this.#index = index;
         this.#energy = energy;
@@ -66,7 +66,7 @@ export class Player {
                 this.#buildingList.push(building);
                 this.#buildings[building.kr] += 1;
                 if (building instanceof PowerPlant) {
-                    const _earn = tilemap.getEntity(building.pos).getEarn();
+                    const _earn = world.getEntity(building.pos).getEarn(world);
                     if (building.en === 'thermalPower' && _earn !== 0) {
                         // 이번 라운드에 화력 발전할 양
                         this.#fuel += 1;

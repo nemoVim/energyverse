@@ -1,29 +1,41 @@
 <script>
     import { createBuilding } from '$lib/classes/buildings';
-    import spawn from '$lib/assets/spawn.png';
+    import tile from '$lib/assets/tile.png';
     import { getPositionStyle } from '$lib/utils/posFunctions';
+    import { Tilemap } from '$lib/classes/tilemap';
+    import { createEventDispatcher } from 'svelte';
 
 
-    export let clickedBuildEn = '';
+    export let clickedBuildEn = null; 
+    export let game;
 
     $: validBuildPosList = makeValidBuildPosList(clickedBuildEn);
 
-    function makeValidBuildPosList(buildingEn) {
-        validMovePosList = [];
-        validBuildPosList = [];
-        validProducePosList = [];
-        let posList = [buildingEn];
-        game.playerList[game.turn].unitList.forEach((unit) => {
-            if (unit.en !== 'probe') return;
+    const dispatch = createEventDispatcher();
 
-            Tilemap.ring(unit.pos, 1).forEach((pos) => {
-                if (game.world.getBiome(pos).en === 'fuel') return;
-                if (game.world.getEntity(pos) !== null) return;
-
-                posList.push(pos);
-            });
+    function changeGame() {
+        dispatch('game', {
+            game: game.gameObj,
         });
-        validBuildPosList = posList;
+    }
+
+    function makeValidBuildPosList(buildingEn) {
+        if (buildingEn === null) {
+            return [];
+        } else {
+            let posList = [buildingEn];
+            game.playerList[game.turn].unitList.forEach((unit) => {
+                if (unit.en !== 'probe') return;
+
+                Tilemap.ring(unit.pos, 1).forEach((pos) => {
+                    if (game.world.getBiome(pos).en === 'fuel') return;
+                    if (game.world.getEntity(pos) !== null) return;
+
+                    posList.push(pos);
+                });
+            });
+            return posList;
+        }
     }
 
     function clickToBuild(buildingEn, pos) {
@@ -35,7 +47,7 @@
         game.buildingList.push(building);
         game.playerList[game.turn].energy -= building.cost;
         validBuildPosList = [];
-        game = new Game(game.gameObj);
+        changeGame();
     }
 </script>
 
@@ -46,14 +58,26 @@
             style={getPositionStyle(pos)}
             on:click={() => clickToBuild(validBuildPosList[0], pos)}
         >
-            <img src={spawn} alt="alt" />
+            <img src={tile} alt="alt" />
         </button>
     {/if}
 {/each}
 
 <style>
+
+    .tile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
     .build > img {
-        width: 1rem;
-        margin: 1rem;
+        width: 2rem;
+        margin: .433rem .5rem;
     }
 </style>

@@ -65,7 +65,7 @@ export class Game {
                     energyList[i],
                     this.#unitList,
                     this.#buildingList,
-                    this.#world.tilemap
+                    this.#world,
                 )
             );
         }

@@ -29,7 +29,7 @@ export class PowerPlant extends Building {
 export class ThermalPower extends PowerPlant {
     static cost = 30;
     static en = 'thermalPower';
-    static kr = '화력 발전소';
+    static kr = '화력';
     static basicEarn = 15;
 
     constructor({ pos, player }) {
@@ -39,11 +39,11 @@ export class ThermalPower extends PowerPlant {
         });
     }
 
-    getEarn(tilemap, status) {
+    getEarn(world, status) {
         const aroundList = Tilemap.ring(super.pos, 1);
 
         aroundList.forEach((pos) => {
-            const biome = tilemap.getBiome(pos);
+            const biome = world.getBiome(pos);
             if (biome.en === 'fuel') {
                 if (biome.amount !== 0) {
                     biome.amount -= 1;
@@ -59,13 +59,13 @@ export class ThermalPower extends PowerPlant {
 export class WindPower extends PowerPlant {
     static cost = 20;
     static en = 'windPower';
-    static kr = '풍력 발전소';
+    static kr = '풍력';
 
-    getEarn(tilemap, status) {
+    getEarn(world, status) {
         return Tilemap.ring(super.pos, 1)
             .concat([super.pos])
             .reduce((prev, pos) => {
-                let biome = tilemap.getBiome(pos);
+                let biome = world.getBiome(pos);
                 if (biome.en === 'mountain' || biome.en === 'water') {
                     return prev + 1;
                 } else {
@@ -85,14 +85,14 @@ export class WindPower extends PowerPlant {
 export class SolarPower extends PowerPlant {
     static cost = 25;
     static en = 'solarPower';
-    static kr = '태양광 발전소';
+    static kr = '태양광';
 
-    getEarn(tilemap, status) {
+    getEarn(world, status) {
         return Tilemap.ring(super.pos, 1)
             .concat([super.pos])
             .reduce((prev, pos) => {
-                let biome = tilemap.getBiome(pos);
-                let entity = tilempa.getEntity(pos);
+                let biome = world.getBiome(pos);
+                let entity = world.getEntity(pos);
                 if (
                     biome.en === 'ground' ||
                     biome.en === 'water' ||
@@ -120,20 +120,20 @@ export class SolarPower extends PowerPlant {
 export class AtomicPower extends PowerPlant {
     static cost = 45;
     static en = 'atomicPower';
-    static kr = '원자력 발전소';
+    static kr = '원자력';
     static basicEarn = 25;
     static enhancedEarn = 35;
 
-    static isBuildable(buildPos, tilemap) {
+    static isBuildable(buildPos, world) {
         return Tilemap.ring(buildPos, 1).reduce((prev, pos) => {
-            let biome = tilemap.getBiome(pos);
+            let biome = world.getBiome(pos);
             if (biome.en === 'water') {
                 return true;
             }
         }, false);
     }
 
-    getEarn(tilemap, status) {
+    getEarn(world, status) {
         return AtomicPower.basicEarn;
     }
 

@@ -8,7 +8,12 @@
     import WorldTileContainer from '$lib/modules/worldTileContainer.svelte';
 
     export let data;
-    let game = new Game(data.game);
+
+    let game = new Game(data.game)
+
+    $: {
+        console.log(game);
+    }
 
     function previousTurn() {
         game.previousTurn();
@@ -26,11 +31,31 @@
     let clickedProduceEn;
 
     function clickedBuild(event) {
-        clickedBuildEn = event.detail.en;
+        clickedProduceEn = null;
+        clickedUnit = null;
+        clickedBuildEn = event.detail.buildEn;
     }
 
     function clickedProduce(event) {
-        clickedProduceEn = event.detail.en;
+        clickedBuildEn = null;
+        clickedUnit = null;
+        clickedProduceEn = event.detail.produceEn;
+    }
+
+    function clickAir(event) {
+        clickedBuildEn = null;
+        clickedProduceEn = null;
+        clickedUnit = null;
+    }
+
+    function clickUnit(event) {
+        clickedBuildEn = null;
+        clickedProduceEn = null;
+        clickedUnit = event.detail.unit;
+    }
+
+    function refreshGame(event) {
+        game = new Game(event.detail.game);
     }
 
 
@@ -49,16 +74,16 @@
 
 <hr />
 
-<div id="gameContainer">
+<BtnContainer on:build={clickedBuild} on:produce={clickedProduce}/>
 
-    <BtnContainer on:build={clickedBuild} on:produce={clickedProduce}/>
+<div id="gameContainer">
 
     <div id="tileContainer">
         <div>
-            <WorldTileContainer {game} />
-            <MoveTileContainer {clickedUnit}/>
-            <BulidTileContainer {clickedBuildEn}/>
-            <ProduceTileContainer {clickedProduceEn}/>
+            <WorldTileContainer {game} on:air={clickAir} on:move={clickUnit} on:game={refreshGame}/>
+            <MoveTileContainer game={game} clickedUnit={clickedUnit} on:game={refreshGame}/>
+            <BulidTileContainer game={game} clickedBuildEn={clickedBuildEn} on:game={refreshGame}/>
+            <ProduceTileContainer game={game} clickedProduceEn={clickedProduceEn} on:game={refreshGame}/>
         </div>
     </div>
 

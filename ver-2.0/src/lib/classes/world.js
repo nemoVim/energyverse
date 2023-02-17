@@ -77,34 +77,34 @@ export class World {
         return [];
     }
 
-    getEntities() {
-        const unitList = [];
-        const buildingList = [];
-        this.#tilemap.cubemap.forEach((yList, x) => {
-            yList.forEach((zList, y) => {
-                zList.forEach((tile, z) => {
-                    if (tile !== null && tile.entity !== null) {
-                        const entity = tile.entity;
-                        const entityObj = {
-                                en: entity.en,
-                                player: entity.player,
-                                pos: entity.pos,
-                        }
-                        if (entity instanceof Unit) {
-                            unitList.push(entityObj);
-                        } else if (entity instanceof Building) {
-                            buildingList.push(entityObj);
-                        }
-                    }
-                });
-            });
-        });
-
-        return {
-            unitList: unitList,
-            buildingList: buildingList,
-        };
-    }
+    // getEntities() {
+    //     const unitList = [];
+    //     const buildingList = [];
+    //     this.#tilemap.cubemap.forEach((yList, x) => {
+    //         yList.forEach((zList, y) => {
+    //             zList.forEach((tile, z) => {
+    //                 if (tile !== null && tile.entity !== null) {
+    //                     const entity = tile.entity;
+    //                     const entityObj = {
+    //                             en: entity.en,
+    //                             player: entity.player,
+    //                             pos: entity.pos,
+    //                     }
+    //                     if (entity instanceof Unit) {
+    //                         unitList.push(entityObj);
+    //                     } else if (entity instanceof Building) {
+    //                         buildingList.push(entityObj);
+    //                     }
+    //                 }
+    //             });
+    //         });
+    //     });
+    // 
+    //     return {
+    //         unitList: unitList,
+    //         buildingList: buildingList,
+    //     };
+    // }
 
     get tilemap() {
         return this.#tilemap;
