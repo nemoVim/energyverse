@@ -1,5 +1,3 @@
-import { createRes } from '$lib/utils/requests';
-import { DEALER_PW } from '$env/static/private';
 import {
     findAllRooms,
     findRoomByTitle,
@@ -16,11 +14,4 @@ export async function GET({ url }) {
 }
 
 export async function POST({ request }) {
-    const { title, dealer, password } = await request.json();
-
-    if (password === DEALER_PW) {
-        return await createRoom(title, dealer);
-    } else {
-        return createRes(400, 'Wrong password!');
-    }
 }
