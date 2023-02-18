@@ -1,6 +1,7 @@
 import { Player } from '$lib/classes/player';
 import { World } from '$lib/classes/world';
 import { createBuilding } from './buildings';
+import { checkTech } from './tech';
 import { createUnit } from './units';
 
 export class Game {
@@ -10,6 +11,7 @@ export class Game {
     #round;
     #turn;
     #first;
+    #temp;
 
     #energyList;
 
@@ -51,24 +53,27 @@ export class Game {
         this.#round = round;
         this.#turn = turn;
         this.#first = first;
+        this.#temp = temp;
 
         this.#playerList = [];
 
         for (let i = first; i < first + 6; i++) {
-            if (i >= 6) {
-                i -= 6;
+            let idx = i;
+            if (idx >= 6) {
+                idx -= 6;
             }
 
             this.#playerList.push(
                 new Player(
-                    i,
-                    energyList[i],
+                    idx,
+                    energyList[idx],
                     this.#unitList,
                     this.#buildingList,
                     this.#world,
                 )
             );
         }
+        this.#world.initFuels(fuelList);
     }
 
     get title() {
@@ -115,7 +120,7 @@ export class Game {
             unitList: this.#unitList,
             buildingList: this.#buildingList,
             fuelList: this.#world.getFuelList(),
-            temp: this.#world.temp,
+            temp: this.#temp,
             round: this.#round,
             turn: this.#turn,
             first: this.#first,
@@ -161,17 +166,48 @@ export class Game {
         }
     }
 
-    settle() {}
+    settle() {
+
+        let totalFuel = 0;
+
+        for (let i = 0; i < 6; i++) {
+            const idx = this.#rotate(this.#first, 0, 6, i);
+            const { energy, fuel }= this.#playerList[idx].settle();
+            this.#energyList[idx] = energy;
+            totalFuel += fuel;
+        }
+
+        this.#temp += totalFuel;
+
+        //물이 차올라서 파괴되는가?
+
+        const underEntityList = this.#world.initSea(this.#temp);
+
+        underEntityList.forEach(entity => {
+            if (!checkTech(this.#playerList[entity.player].tech), 1) {
+                game.unitList.splice(game.unitList.indexOf(entity), 1);
+            }
+        });
+
+        //돈 재정산
+        for (let i = 0; i < 6; i++) {
+            this.#playerList[i] = new Player(i, this.#energyList[i], this.#unitList, this.#buildingList, this.#world);
+        }
+
+        //저장!!!! 및
+
+
+    }
 
     previousRound() {
         this.#round -= 1;
-        this.#first = this.#rotate(this.#first, 0, 6, -1);
+        // this.#first = this.#rotate(this.#first, 0, 6, -1);
         this.#turn = this.#first;
     }
 
     nextRound() {
         this.#round += 1;
-        this.#first = this.#rotate(this.#first, 0, 6, 1);
+        // this.#first = this.#rotate(this.#first, 0, 6, 1);
         this.#turn = this.#first;
     }
 

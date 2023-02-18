@@ -19,7 +19,7 @@ export class Probe extends Unit {
 export class WindUnit extends Unit {
     static cost = 15;
     static en = 'windUnit';
-    static kr = '풍력 공격 유닛';
+    static kr = '풍력';
 
     constructor(unitObj) {
         super(unitObj);
@@ -29,7 +29,7 @@ export class WindUnit extends Unit {
 export class SolarUnit extends Unit {
     static cost = 15;
     static en = 'solarUnit';
-    static kr = '태양광 공격 유닛';
+    static kr = '태양광';
 
     constructor(unitObj) {
         super(unitObj);
@@ -38,7 +38,7 @@ export class SolarUnit extends Unit {
 export class AtomicUnit extends Unit {
     static cost = 15;
     static en = 'atomicUnit';
-    static kr = '원자력 공격 유닛';
+    static kr = '원자력';
 
     constructor(unitObj) {
         super(unitObj);

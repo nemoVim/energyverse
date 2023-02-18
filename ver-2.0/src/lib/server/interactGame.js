@@ -22,7 +22,7 @@ export async function createGame(title) {
             energyList: Array.from({ length: 6 }, () => 
                 defaultEnergy
             ),
-            fuelList: [],
+            fuelList: [[[0,0,0],15],[[-1,4,-3],10],[[-4,3,1],10],[[-3,-1,4],10],[[1,-4,3],10],[[4,-3,-1],10],[[3,1,-4],10],[[-2,9,-7],5],[[-9,7,2],5],[[-7,-2,9],5],[[2,-9,7],5],[[9,-7,-2],5],[[7,2,-9],5]],
             unitList: unitList,
         });
         await game.save();
@@ -37,6 +37,5 @@ export async function findGame(title) {
             title: title,
         });
     });
-    console.log(game);
     return createRes(200, game);
 }

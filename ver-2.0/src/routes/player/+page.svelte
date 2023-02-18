@@ -6,7 +6,7 @@
 
 <div id="roomContainer">
     {#each roomList as room}
-        <a class="roomAnchor" href="/player/game/{room.title}">
+        <a class="roomAnchor" href="/player/room/{room.title}">
             <p>Title: {room.title}</p>
             <p>Dealer: {room.dealer}</p>
         </a>

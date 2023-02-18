@@ -1,8 +1,7 @@
 import { createBiome } from '$lib/classes/biomes';
-import { Building, createBuilding } from '$lib/classes/buildings';
 import { Tilemap } from '$lib/classes/tilemap';
-import { createUnit, Unit } from '$lib/classes/units';
 import { Tile } from '$lib/classes/tile';
+import { checkTech } from './tech';
 
 export class World {
     static worldSize = 13;
@@ -43,15 +42,19 @@ export class World {
 
     initFuels(fuelList) {
         fuelList.forEach((fuel) => {
-            this.#tilemap.getBiome(fuel.pos).amount = fuel.amount;
+            this.getBiome(fuel[0]).amount = fuel[1];
         });
     }
 
     initSea(temp) {
+        const underEntityList = [];
         this.#temp = temp;
         for (let i = 0; i < temp * this.seaPerTemp; i++) {
             Tilemap.ring([0, 0, 0], World.worldSize - i).forEach((pos) => {
                 if (this.getBiome(pos).en === 'ground') {
+                    if (this.getEntity(pos) !== null) {
+                        underEntityList.push(this.getEntity(pos));
+                    }
                     this.setBiome(
                         pos,
                         createBiome({
@@ -62,6 +65,7 @@ export class World {
                 }
             });
         }
+        return underEntityList;
     }
 
     initEntities(unitList, buildingList) {
@@ -73,8 +77,15 @@ export class World {
         });
     }
 
+    static basicFuelList = [[[0,0,0],15],[[-1,4,-3],10],[[-4,3,1],10],[[-3,-1,4],10],[[1,-4,3],10],[[4,-3,-1],10],[[3,1,-4],10],[[-2,9,-7],5],[[-9,7,2],5],[[-7,-2,9],5],[[2,-9,7],5],[[9,-7,-2],5],[[7,2,-9],5]];
+
     getFuelList() {
-        return [];
+        const fuelList = [];
+        World.basicFuelList.forEach(fuel => {
+            const pos = fuel[0];
+            fuelList.push([pos, this.getBiome(pos).amount]);
+        });
+        return fuelList;
     }
 
     // getEntities() {

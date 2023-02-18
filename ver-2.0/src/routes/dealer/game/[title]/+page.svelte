@@ -27,29 +27,32 @@
 
     let clickedUnit;
 
-    let clickedBuildEn;
+    let clickedBuildObj;
     let clickedProduceEn;
 
     function clickedBuild(event) {
         clickedProduceEn = null;
         clickedUnit = null;
-        clickedBuildEn = event.detail.buildEn;
+        clickedBuildObj = {
+            buildEn: event.detail.buildEn,
+            labTrack: event.detail.labTrack,
+        };
     }
 
     function clickedProduce(event) {
-        clickedBuildEn = null;
+        clickedBuildObj = null;
         clickedUnit = null;
         clickedProduceEn = event.detail.produceEn;
     }
 
     function clickAir(event) {
-        clickedBuildEn = null;
+        clickedBuildObj = null;
         clickedProduceEn = null;
         clickedUnit = null;
     }
 
     function clickUnit(event) {
-        clickedBuildEn = null;
+        clickedBuildObj = null;
         clickedProduceEn = null;
         clickedUnit = event.detail.unit;
     }
@@ -74,7 +77,7 @@
 
 <hr />
 
-<BtnContainer on:build={clickedBuild} on:produce={clickedProduce}/>
+<BtnContainer {game} on:build={clickedBuild} on:produce={clickedProduce}/>
 
 <div id="gameContainer">
 
@@ -82,7 +85,7 @@
         <div>
             <WorldTileContainer {game} on:air={clickAir} on:move={clickUnit} on:game={refreshGame}/>
             <MoveTileContainer game={game} clickedUnit={clickedUnit} on:game={refreshGame}/>
-            <BulidTileContainer game={game} clickedBuildEn={clickedBuildEn} on:game={refreshGame}/>
+            <BulidTileContainer game={game} clickedBuildObj={clickedBuildObj} on:game={refreshGame}/>
             <ProduceTileContainer game={game} clickedProduceEn={clickedProduceEn} on:game={refreshGame}/>
         </div>
     </div>

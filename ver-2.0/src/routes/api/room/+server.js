@@ -1,7 +1,6 @@
 import {
     findAllRooms,
     findRoomByTitle,
-    createRoom,
 } from '$lib/server/interactRoom';
 
 export async function GET({ url }) {
@@ -11,7 +10,4 @@ export async function GET({ url }) {
     } else {
         return await findRoomByTitle(title);
     }
-}
-
-export async function POST({ request }) {
 }

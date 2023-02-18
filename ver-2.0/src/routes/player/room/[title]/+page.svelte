@@ -3,7 +3,7 @@
     const room = data.room;
 
     function joinGame(player) {
-        location.href = `/game/${room.title}?player=${player}`;
+        location.href = `/player/game/${room.title}?player=${player}`;
     }
 </script>
 

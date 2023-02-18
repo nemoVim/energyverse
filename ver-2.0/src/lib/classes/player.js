@@ -1,14 +1,18 @@
 import { Lab, PowerPlant } from '$lib/classes/buildings';
+import { checkTech } from './tech';
 
 export class Player {
 
-    static labStorage = 5;
-    static defaultStorage = 40;
+    static labEnergyStorage = 5;
+    static labUnitStorage = 1;
+    static defaultEnergyStorage = 40;
+    static defaultUnitStorage = 1;
     static defaultEarn = 10;
 
     #index;
     #energy;
-    #storage;
+    #energyStorage;
+    #unitStorage;
     #units;
     #unitList;
     #buildings;
@@ -17,11 +21,14 @@ export class Player {
     #tech;
     #fuel;
 
+    #hydrogenLabCnt;
+
     constructor(index, energy, unitList, buildingList, world) {
 
         this.#index = index;
         this.#energy = energy;
-        this.#storage = Player.defaultStorage;
+        this.#energyStorage = Player.defaultEnergyStorage;
+        this.#unitStorage = Player.defaultUnitStorage;
 
         this.#units = {
             '일꾼': 0,
@@ -61,12 +68,14 @@ export class Player {
 
         this.#buildingList = [];
 
+        this.#hydrogenLabCnt = 0;
+
         buildingList.forEach(building => {
             if (building.player === this.#index) {
                 this.#buildingList.push(building);
                 this.#buildings[building.kr] += 1;
                 if (building instanceof PowerPlant) {
-                    const _earn = world.getEntity(building.pos).getEarn(world);
+                    const _earn = world.getEntity(building.pos).getEarn(world, this.#tech);
                     if (building.en === 'thermalPower' && _earn !== 0) {
                         // 이번 라운드에 화력 발전할 양
                         this.#fuel += 1;
@@ -74,18 +83,29 @@ export class Player {
                     this.#earn += _earn;
                 } else if (building instanceof Lab) {
                     this.#tech[building.track] += building.floor;
+                    if (building.track === 'hydrogen') {
+                        this.#hydrogenLabCnt += 1;
+                    }
                 }
             }
         });
 
-        this.#storage += Player.labStorage * this.#buildings['연구소'];
+        if (checkTech(this.#tech, 9)) {
+            this.#energyStorage += Player.labEnergyStorage * this.#hydrogenLabCnt;
+        }
 
+        this.#energyStorage += Player.labEnergyStorage * this.#buildings['연구소'];
+        this.#unitStorage += Player.labUnitStorage * this.#buildings['연구소'];
+
+        if (this.#energy >= this.#energyStorage) {
+            this.#energy = this.#energyStorage;
+        }
     }
 
     settle() {
         this.#energy += this.#earn;
-        if (this.#energy > this.#storage) {
-            this.#energy = this.#storage;
+        if (this.#energy >= this.#energyStorage) {
+            this.#energy = this.#energyStorage;
         }
 
         return {
@@ -104,13 +124,17 @@ export class Player {
 
     set energy(_energy) {
         this.#energy = _energy;
-        if (this.#energy >= this.#storage) {
-            this.#energy = this.#storage;
+        if (this.#energy >= this.#energyStorage) {
+            this.#energy = this.#energyStorage;
         }
     }
 
-    get storage() {
-        return this.#storage;
+    get energyStorage() {
+        return this.#energyStorage;
+    }
+
+    get unitStorage() {
+        return this.#unitStorage;
     }
 
     get units() {

@@ -3,6 +3,7 @@
     import tile from '$lib/assets/tile.png';
     import { getPositionStyle } from '$lib/utils/posFunctions';
     import { createEventDispatcher } from 'svelte';
+    import { checkTech } from '$lib/classes/tech';
 
     export let game;
     export let clickedUnit = null;
@@ -34,8 +35,9 @@
             Tilemap.ring(unit.pos, 1).forEach((pos, i) => {
                 let j = i - 1;
                 if (j < 0) j = 5;
-                posList = posList.concat(Tilemap.move(pos, j, 1));
+                posList = posList.concat([Tilemap.move(pos, j, 1)]);
             });
+            console.log(posList);
         } else if (unit.en === 'atomicUnit') {
             posList = posList.concat(Tilemap.ring(unit.pos, 2));
         } else if (unit.en === 'missile') {
@@ -68,6 +70,13 @@
             if (biome === null) {
                 return false;
             }
+
+            const nowPlayer = game.playerList[game.turn];
+
+            if (biome.en === 'mountain' && unit.en === 'probe' && !checkTech(nowPlayer.tech, 0)) return false;
+            if (biome.en === 'mountain' && unit.en !== 'probe' && !checkTech(nowPlayer.tech, 3)) return false;
+            if (biome.en === 'water' && unit.en === 'probe' && !checkTech(nowPlayer.tech, 1)) return false;
+            if (biome.en === 'water' && unit.en !== 'probe' && !checkTech(nowPlayer.tech, 2)) return false;
 
             if (game.world.getBiome(pos).en === 'fuel') {
                 return false;

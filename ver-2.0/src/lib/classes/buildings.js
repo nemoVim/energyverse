@@ -1,5 +1,6 @@
 import { Entity } from '$lib/classes/entity';
 import { Tilemap } from '$lib/classes/tilemap';
+import { checkTech } from './tech';
 
 export class Building extends Entity {
     constructor(buildingObj) {
@@ -39,20 +40,25 @@ export class ThermalPower extends PowerPlant {
         });
     }
 
-    getEarn(world, status) {
+    getEarn(world, tech) {
         const aroundList = Tilemap.ring(super.pos, 1);
+
+        let earn = 0;
 
         aroundList.forEach((pos) => {
             const biome = world.getBiome(pos);
+
+            if (biome === null) return;
+
             if (biome.en === 'fuel') {
                 if (biome.amount !== 0) {
                     biome.amount -= 1;
-                    return ThermalPower.basicEarn;
+                    earn = ThermalPower.basicEarn;
                 }
             }
         });
 
-        return 0;
+        return earn;
     }
 }
 
@@ -61,13 +67,17 @@ export class WindPower extends PowerPlant {
     static en = 'windPower';
     static kr = '풍력';
 
-    getEarn(world, status) {
+    getEarn(world, tech) {
         return Tilemap.ring(super.pos, 1)
             .concat([super.pos])
             .reduce((prev, pos) => {
                 let biome = world.getBiome(pos);
                 if (biome.en === 'mountain' || biome.en === 'water') {
-                    return prev + 1;
+                    if (checkTech(tech, 8)) {
+                        return prev + 2;
+                    } else {
+                        return prev + 1;
+                    }
                 } else {
                     return prev;
                 }
@@ -83,12 +93,12 @@ export class WindPower extends PowerPlant {
 }
 
 export class SolarPower extends PowerPlant {
-    static cost = 25;
+    static cost = 15;
     static en = 'solarPower';
     static kr = '태양광';
 
-    getEarn(world, status) {
-        return Tilemap.ring(super.pos, 1)
+    getEarn(world, tech) {
+        let earn = Tilemap.ring(super.pos, 1)
             .concat([super.pos])
             .reduce((prev, pos) => {
                 let biome = world.getBiome(pos);
@@ -98,7 +108,10 @@ export class SolarPower extends PowerPlant {
                     biome.en === 'water' ||
                     biome.en === 'fuel'
                 ) {
-                    if (entity !== null && entity.en !== 'solarPower') {
+                    if (
+                        entity instanceof Building &&
+                        entity.en !== 'solarPower'
+                    ) {
                         return prev;
                     } else {
                         return prev + 1;
@@ -107,6 +120,11 @@ export class SolarPower extends PowerPlant {
                     return prev;
                 }
             }, 0);
+        if (checkTech(tech, 12)) {
+            return earn + 5;
+        } else {
+            return earn;
+        }
     }
 
     constructor({ pos, player }) {
@@ -133,8 +151,12 @@ export class AtomicPower extends PowerPlant {
         }, false);
     }
 
-    getEarn(world, status) {
-        return AtomicPower.basicEarn;
+    getEarn(world, tech) {
+        if (checkTech(tech, 16)) {
+            return AtomicPower.enhancedEarn;
+        } else {
+            return AtomicPower.basicEarn;
+        }
     }
 
     constructor({ pos, player }) {
@@ -154,10 +176,10 @@ export class Lab extends Building {
     #floor;
     #track;
 
-    constructor({ floor, track, pos, player }) {
+    constructor({ floor = 1, track, pos, player }) {
         super({
             pos: pos,
-            plapyer: player,
+            player: player,
         });
         this.#floor = floor;
         this.#track = track;
@@ -176,13 +198,15 @@ export class Lab extends Building {
     }
 
     get cost() {
-        return Lab.cost * this.#floor + (Lab.floorCost * this.#floor * (this.#floor - 1)) / 2;
+        return (
+            Lab.cost * this.#floor +
+            (Lab.floorCost * this.#floor * (this.#floor - 1)) / 2
+        );
     }
 
     getUpgradeCost() {
         return Lab.cost + Lab.floorCost * this.#floor;
     }
-
 }
 
 export const Buildings = {
