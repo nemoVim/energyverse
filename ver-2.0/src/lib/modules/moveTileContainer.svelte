@@ -102,6 +102,9 @@
         if (entity !== null) {
             game.playerList[unit.player].energy += entity.cost - 5;
             game.unitList.splice(game.unitList.indexOf(entity), 1);
+            if (unit.en === 'missile') {
+                game.unitList.splice(game.unitList.indexOf(unit), 1);
+            }
         }
         validMovePosList = [];
         changeGame();

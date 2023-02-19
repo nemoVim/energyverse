@@ -46,7 +46,7 @@ export class AtomicUnit extends Unit {
 }
 
 export class Missile extends Unit {
-    static cost = 15;
+    static cost = 20;
     static en = 'missile';
     static kr = '미사일';
 

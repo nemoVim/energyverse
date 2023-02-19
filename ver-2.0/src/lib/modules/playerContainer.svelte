@@ -6,12 +6,12 @@
     {#each game.playerList as player}
         <div class="playerDiv">
             <p>index: {player.index}</p>
-            <p>energy: {player.energy}</p>
-            <p>storage: {player.storage}</p>
+            <p>energy: {player.energy}/{player.energyStorage}</p>
+            <p>unit: {player.unitList.length}/{player.unitStorage}</p>
             <p>earn: {player.earn}</p>
-            <!-- <p>units: {JSON.stringify(player.units)}</p>
-        <p>buildings: {JSON.stringify(player.buildings)}</p> -->
-            <!-- <p>tech: {JSON.stringify(player.tech)}</p> -->
+            <p>units: {JSON.stringify(player.units)}</p>
+            <p>buildings: {JSON.stringify(player.buildings)}</p>
+            <p>tech: {JSON.stringify(player.tech)}</p>
         </div>
     {/each}
 </div>

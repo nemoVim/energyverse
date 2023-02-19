@@ -1,8 +1,9 @@
 import { Player } from '$lib/classes/player';
 import { World } from '$lib/classes/world';
-import { createBuilding } from './buildings';
+import { Building, createBuilding } from './buildings';
 import { checkTech } from './tech';
-import { createUnit } from './units';
+import { Tilemap } from './tilemap';
+import { createUnit, Unit } from './units';
 
 export class Game {
     #title;
@@ -100,6 +101,10 @@ export class Game {
         return this.#first;
     }
 
+    get temp() {
+        return this.#temp;
+    }
+
     get playerList() {
         return this.#playerList;
     }
@@ -185,20 +190,51 @@ export class Game {
 
         underEntityList.forEach(entity => {
             if (!checkTech(this.#playerList[entity.player].tech, 1)) {
-                this.#unitList.splice(this.#unitList.indexOf(entity), 1);
+                if (entity instanceof Building) {
+                    this.#buildingList.splice(this.#buildingList.indexOf(entity), 1);
+                } else if (entity instanceof Unit) {
+                    this.#unitList.splice(this.#unitList.indexOf(entity), 1);
+                }
             }
         });
+
+        // 중앙 돈 주기 
+        let posList = Tilemap.ring([0, 0, 0], 1);
+            Tilemap.ring([0, 0, 0], 1).forEach((pos, i) => {
+                let j = i - 1;
+                if (j < 0) j = 5;
+                posList = posList.concat([Tilemap.move(pos, j, 1)]);
+            });
+        
+        const playerUnitList = [0, 0, 0, 0, 0, 0];
+
+        posList.forEach(pos => {
+            const entity = this.#world.getEntity(pos);
+            if (entity === null) return;
+
+            playerUnitList[entity.player] += 1;
+        });
+
+        let maxUnitCnt = 0;
+        const maxPlayer = playerUnitList.reduce((prev, value, index) => {
+            if (value > maxUnitCnt) {
+                maxUnitCnt = value;
+                return index;
+            } else if (value === maxUnitCnt) {
+                return null;
+            } else {
+                return prev;
+            }
+        }, null);
+
+        if (maxPlayer !== null) {
+            this.#energyList[maxPlayer] += 15;
+        }
 
         //돈 재정산
         for (let i = 0; i < 6; i++) {
             this.#playerList[i] = new Player(i, this.#energyList[i], this.#unitList, this.#buildingList, this.#world);
         }
-
-        // 연구소
-
-        //저장!!!!
-
-
     }
 
     previousRound() {

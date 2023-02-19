@@ -19,13 +19,28 @@
     import fuel from '$lib/assets/fuel.png';
     import { getPositionStyle } from '$lib/utils/posFunctions';
     import { createEventDispatcher } from 'svelte';
+    import { Lab } from '$lib/classes/buildings';
 
     export let game;
 
     const unitImgList = [unit_0, unit_1, unit_2, unit_3, unit_4, unit_5];
-    const buildingImgList = [building_0, building_1, building_2, building_3, building_4, building_5];
+    const buildingImgList = [
+        building_0,
+        building_1,
+        building_2,
+        building_3,
+        building_4,
+        building_5,
+    ];
 
-    const playerTextColorList = ['white', 'black', 'white', 'white', 'white', 'black'];
+    const playerTextColorList = [
+        'white',
+        'black',
+        'white',
+        'white',
+        'white',
+        'black',
+    ];
 
     const line = Array.from(
         { length: 2 * game.world.size - 1 },
@@ -53,86 +68,117 @@
             });
         }
     }
+
+    function getLabName(track) {
+        if (track === 'material') {
+            return '신소재';
+        } else if (track === 'hydrogen') {
+            return '수소';
+        } else if (track === 'environment') {
+            return '환경';
+        } else if (track === 'grid') {
+            return '그리드';
+        } else if (track === 'ai') {
+            return 'AI';
+        }
+    }
 </script>
 
-        {#each line as x}
-            {#each line as y}
-                {#each line as z}
-                    {#if x + y + z === 0}
-                        {#if game.world.getBiome([x, y, z]).en === 'water'}
-                            <button
-                                class="tile"
-                                style={getPositionStyle([x, y, z], 'biome')}
-                                on:click={clickAir}
-                            >
-                                <img src={water} alt="alt" />
-                            </button>
-                        {:else if game.world.getBiome( [x, y, z] ).en === 'ground'}
-                            <button
-                                class="tile"
-                                style={getPositionStyle([x, y, z], 'biome')}
-                                on:click={clickAir}
-                            >
-                                <img src={ground} alt="alt" />
-                            </button>
-                        {:else if game.world.getBiome( [x, y, z] ).en === 'mountain'}
-                            <button
-                                class="tile"
-                                style={getPositionStyle([x, y, z], 'biome')}
-                                on:click={clickAir}
-                            >
-                                <img src={mountain} alt="alt" />
-                            </button>
-                        {:else}
-                            <button
-                                class="tile"
-                                style={getPositionStyle([x, y, z], 'biome')}
-                                on:click={() =>
-                                    console.log(
-                                        game.world.getBiome([x, y, z]).amount
-                                    )}
-                            >
-                                <img src={fuel} alt="alt" />
-                            </button>
-                        {/if}
-                    {/if}
-                {/each}
-            {/each}
-        {/each}
-
-        {#each game.playerList as player}
-            {#each player.unitList as unit}
-                <button
-                    class="tile unit"
-                    style={getPositionStyle(unit.pos, 'unit')}
-                    on:click={() => clickUnit(unit)}
-                >
-                    <p
-                        style="position: absolute; color: {playerTextColorList[player.index]}; font-weight: bold; text-align: center; margin: 0; font-size: .2rem;"
+{#each line as x}
+    {#each line as y}
+        {#each line as z}
+            {#if x + y + z === 0}
+                {#if game.world.getBiome([x, y, z]).en === 'water'}
+                    <button
+                        class="tile"
+                        style={getPositionStyle([x, y, z], 'biome')}
+                        on:click={clickAir}
                     >
-                        {unit.kr}
-                    </p>
-                    <img src={unitImgList[player.index]} alt="alt" />
-                </button>
-            {/each}
-
-            {#each player.buildingList as building}
-                <button
-                    class="tile building"
-                    style={getPositionStyle(building.pos, 'building')}
-                >
-                    <p
-                        style="position: absolute; color: {playerTextColorList[player.index]}; font-weight: bold; text-align: center; margin: 0; font-size: .2rem;"
+                        <img src={water} alt="alt" />
+                    </button>
+                {:else if game.world.getBiome([x, y, z]).en === 'ground'}
+                    <button
+                        class="tile"
+                        style={getPositionStyle([x, y, z], 'biome')}
+                        on:click={clickAir}
                     >
-                        {building.kr}
-                    </p>
-                    <img src={buildingImgList[player.index]} alt="alt" />
-                </button>
-            {/each}
+                        <img src={ground} alt="alt" />
+                    </button>
+                {:else if game.world.getBiome([x, y, z]).en === 'mountain'}
+                    <button
+                        class="tile"
+                        style={getPositionStyle([x, y, z], 'biome')}
+                        on:click={clickAir}
+                    >
+                        <img src={mountain} alt="alt" />
+                    </button>
+                {:else}
+                    <button
+                        class="tile"
+                        style={getPositionStyle([x, y, z], 'biome')}
+                        on:click={() =>
+                            console.log(game.world.getBiome([x, y, z]).amount)}
+                    >
+                        <img src={fuel} alt="alt" />
+                    </button>
+                {/if}
+            {/if}
         {/each}
+    {/each}
+{/each}
+
+{#each game.playerList as player}
+    {#each player.unitList as unit}
+        <button
+            class="tile unit"
+            style={getPositionStyle(unit.pos, 'unit')}
+            on:click={() => clickUnit(unit)}
+        >
+            <p
+                style="position: absolute; color: {playerTextColorList[
+                    player.index
+                ]}; text-align: center; margin: 0; font-size: .2rem;"
+            >
+                {unit.kr}
+            </p>
+            <img src={unitImgList[player.index]} alt="alt" />
+        </button>
+    {/each}
+
+    {#each player.buildingList as building}
+        {#if building instanceof Lab}
+            <button
+                class="tile building"
+                style={getPositionStyle(building.pos, 'building')}
+            >
+                <p
+                    style="position: absolute; color: {playerTextColorList[
+                        player.index
+                    ]}; text-align: center; margin: 0; font-size: .2rem;"
+                >
+                    {getLabName(building.track)}
+                </p>
+                <img src={buildingImgList[player.index]} alt="alt" />
+            </button>
+        {:else}
+            <button
+                class="tile building"
+                style={getPositionStyle(building.pos, 'building')}
+            >
+                <p
+                    style="position: absolute; color: {playerTextColorList[
+                        player.index
+                    ]}; text-align: center; margin: 0; font-size: .2rem;"
+                >
+                    {building.kr}
+                </p>
+                <img src={buildingImgList[player.index]} alt="alt" />
+            </button>
+        {/if}
+    {/each}
+{/each}
 
 <style>
-    
     button:focus {
         outline: none;
     }
@@ -155,7 +201,6 @@
     .unit > img,
     .building > img {
         width: 2rem;
-        margin: .299rem .5rem;
+        margin: 0.299rem 0.5rem;
     }
-
 </style>

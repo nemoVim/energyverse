@@ -52,8 +52,7 @@
         color: black;
         
     }
-    #create{
-    }
+
     div.row {
         font-size: 2rem;
         width: 90%;

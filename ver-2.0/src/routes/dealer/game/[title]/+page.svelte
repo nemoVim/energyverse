@@ -9,7 +9,7 @@
 
     export let data;
 
-    let game = new Game(data.game)
+    let game = new Game(data.game);
 
     $: {
         console.log(game);
@@ -60,38 +60,49 @@
     function refreshGame(event) {
         game = new Game(event.detail.game);
     }
-
-
 </script>
 
 <h1>{game.title}</h1>
 
 <hr />
 
-<p>Round: {game.round}</p>
-<p>Turn: {game.turn}</p>
-<p>First: {game.first}</p>
-
-<button on:click={previousTurn}>이전 턴</button>
-<button on:click={nextTurn}>다음 턴</button>
-
-<hr />
-
-<BtnContainer {game} on:build={clickedBuild} on:produce={clickedProduce}/>
+<BtnContainer {game} on:build={clickedBuild} on:produce={clickedProduce} />
 
 <div id="gameContainer">
-
-    <div id="tileContainer">
+    <div>
         <div>
-            <WorldTileContainer {game} on:air={clickAir} on:move={clickUnit} on:game={refreshGame}/>
-            <MoveTileContainer game={game} clickedUnit={clickedUnit} on:game={refreshGame}/>
-            <BulidTileContainer game={game} clickedBuildObj={clickedBuildObj} on:game={refreshGame}/>
-            <ProduceTileContainer game={game} clickedProduceEn={clickedProduceEn} on:game={refreshGame}/>
+            <p>Round: {game.round}</p>
+            <p>Turn: {game.turn}</p>
+            <p>Temp: {game.temp}</p>
+            <p>First: {game.first}</p>
+
+            <button on:click={previousTurn}>이전 턴</button>
+            <button on:click={nextTurn}>다음 턴</button>
+        </div>
+        <div id="tileContainer">
+            <div>
+                <WorldTileContainer
+                    {game}
+                    on:air={clickAir}
+                    on:move={clickUnit}
+                    on:game={refreshGame}
+                />
+                <MoveTileContainer {game} {clickedUnit} on:game={refreshGame} />
+                <BulidTileContainer
+                    {game}
+                    {clickedBuildObj}
+                    on:game={refreshGame}
+                />
+                <ProduceTileContainer
+                    {game}
+                    {clickedProduceEn}
+                    on:game={refreshGame}
+                />
+            </div>
         </div>
     </div>
 
     <PlayerContainer {game} />
-
 </div>
 
 <style>

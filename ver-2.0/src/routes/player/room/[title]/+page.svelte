@@ -2,8 +2,8 @@
     export let data;
     const room = data.room;
 
-    function joinGame(player) {
-        location.href = `/player/game/${room.title}?player=${player}`;
+    function joinGame(idx) {
+        location.href = `/player/game/${room.title}?player=${idx}`;
     }
 </script>
 
@@ -14,11 +14,11 @@
 <hr id="seperator" />
 
 <div id="pSB">
-    {#each room.playerList as player}
+    {#each room.playerList as player, i}
     <button id="playerSelectButton" 
         on:click={() => 
         {
-            joinGame(player);
+            joinGame(i);
         }}>
             {player}
     </button>

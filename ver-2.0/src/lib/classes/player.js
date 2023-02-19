@@ -1,4 +1,4 @@
-import { Lab, PowerPlant } from '$lib/classes/buildings';
+import { Factory, Lab, PowerPlant } from '$lib/classes/buildings';
 import { checkTech } from './tech';
 
 export class Player {
@@ -32,9 +32,9 @@ export class Player {
 
         this.#units = {
             '일꾼': 0,
-            '풍력 유닛': 0,
-            '태양광 유닛': 0,
-            '원자력 유닛': 0,
+            '풍력': 0,
+            '태양광': 0,
+            '원자력': 0,
             '미사일': 0,
         };
 
@@ -50,19 +50,19 @@ export class Player {
         this.#earn = Player.defaultEarn;
 
         this.#tech = {
-            ai: 0,
-            grid: 0,
-            hydrogen: 0,
             material: 0,
+            hydrogen: 0,
             environment: 0,
+            grid: 0,
+            ai: 0,
         };
 
         this.#buildings = {
             '공장': 0,
-            '화력 발전소': 0,
-            '풍력 발전소': 0,
-            '태양광 발전소': 0,
-            '원자력 발전소': 0,
+            '화력': 0,
+            '풍력': 0,
+            '태양광': 0,
+            '원자력': 0,
             '연구소': 0,
         };
 
@@ -73,26 +73,39 @@ export class Player {
 
         buildingList.forEach(building => {
             if (building.player === this.#index) {
-                this.#buildingList.push(building);
-                this.#buildings[building.kr] += 1;
+                if (building instanceof Lab) {
+                    this.#buildingList.push(building);
+                    this.#buildings[building.kr] += 1;
+                    this.#tech[building.track] += building.floor;
+                    if (building.track === 'hydrogen') {
+                        this.#hydrogenLabCnt += 1;
+                    }
+                } else if (building instanceof Factory) {
+                    this.#buildingList.push(building);
+                    this.#buildings[building.kr] += 1;
+                }
+            }
+        });
+
+        buildingList.forEach(building => {
+            if (building.player === this.#index) {
                 if (building instanceof PowerPlant) {
+                    this.#buildingList.push(building);
+                    this.#buildings[building.kr] += 1;
                     const _earn = world.getEntity(building.pos).getEarn(world, this.#tech);
                     if (building.en === 'thermalPower' && _earn !== 0) {
                         // 이번 라운드에 화력 발전할 양
                         this.#fuel += 1;
                     }
                     this.#earn += _earn;
-                } else if (building instanceof Lab) {
-                    this.#tech[building.track] += building.floor;
-                    if (building.track === 'hydrogen') {
-                        this.#hydrogenLabCnt += 1;
-                    }
                 }
             }
         });
 
+        console.log(this.#tech);
         if (checkTech(this.#tech, 9)) {
             this.#energyStorage += Player.labEnergyStorage * this.#hydrogenLabCnt;
+            this.#unitStorage += Player.labUnitStorage * this.#hydrogenLabCnt;
         }
 
         this.#energyStorage += Player.labEnergyStorage * this.#buildings['연구소'];

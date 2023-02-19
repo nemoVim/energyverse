@@ -72,7 +72,7 @@
                     }}>solar Power</button
                 >
             {/if}
-            {#if checkTech(nowPlayer.tech, 14) && Buildings['atmoicPower'].cost <= nowPlayer.energy}
+            {#if checkTech(nowPlayer.tech, 14) && Buildings['atomicPower'].cost <= nowPlayer.energy}
                 <button
                     on:click={() => {
                         clickBuildBtn('atomicPower');
@@ -85,16 +85,6 @@
             {#if Buildings['lab'].cost <= nowPlayer.energy}
                 <button
                     on:click={() => {
-                        clickBuildBtn('lab', 'ai');
-                    }}>ai Lab</button
-                >
-                <button
-                    on:click={() => {
-                        clickBuildBtn('lab', 'grid');
-                    }}>grid Lab</button
-                >
-                <button
-                    on:click={() => {
                         clickBuildBtn('lab', 'material');
                     }}>material Lab</button
                 >
@@ -105,8 +95,18 @@
                 >
                 <button
                     on:click={() => {
+                        clickBuildBtn('lab', 'grid');
+                    }}>grid Lab</button
+                >
+                <button
+                    on:click={() => {
                         clickBuildBtn('lab', 'environment');
                     }}>environment Lab</button
+                >
+                <button
+                    on:click={() => {
+                        clickBuildBtn('lab', 'ai');
+                    }}>ai Lab</button
                 >
             {/if}
         </div>
@@ -117,6 +117,12 @@
     <div class="layer" on:keypress={() => {}} on:click={toggleProduceDiv}>
         {#if nowPlayer.unitList.length < nowPlayer.unitStorage && nowPlayer.buildings['공장'] >= 1}
             {#if Units['probe'].cost <= nowPlayer.energy && nowPlayer.units['일꾼'] < 3}
+                <button
+                    on:click={() => {
+                        clickProduceBtn('probe');
+                    }}>Probe</button
+                >
+            {:else if checkTech(nowPlayer.tech, 9) && Units['probe'].cost <= nowPlayer.energy && nowPlayer.units['일꾼'] < 4}
                 <button
                     on:click={() => {
                         clickProduceBtn('probe');

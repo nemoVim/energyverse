@@ -4,7 +4,6 @@
     import { getPositionStyle } from '$lib/utils/posFunctions';
     import { Tilemap } from '$lib/classes/tilemap';
     import { createEventDispatcher } from 'svelte';
-    import { building } from '$app/environment';
     import { checkTech } from '$lib/classes/tech';
 
     export let clickedBuildObj = null;
@@ -25,14 +24,22 @@
             return [];
         } else {
             let posList = [buildingObj];
-            const nowPlayer = game.playerList[game.turn]
+            const nowPlayer = game.playerList[game.turn];
             nowPlayer.unitList.forEach((unit) => {
                 if (unit.en !== 'probe') return;
 
                 Tilemap.ring(unit.pos, 1).forEach((pos) => {
                     if (game.world.getBiome(pos).en === 'fuel') return;
-                    if (game.world.getBiome(pos).en === 'mountain' && !checkTech(nowPlayer.tech, 0)) return;
-                    if (game.world.getBiome(pos).en === 'water' && !checkTech(nowPlayer.tech, 1)) return;
+                    if (
+                        game.world.getBiome(pos).en === 'mountain' &&
+                        !checkTech(nowPlayer.tech, 0)
+                    )
+                        return;
+                    if (
+                        game.world.getBiome(pos).en === 'water' &&
+                        !checkTech(nowPlayer.tech, 1)
+                    )
+                        return;
                     if (game.world.getEntity(pos) !== null) {
                         if (buildingObj.buildEn !== 'lab') return;
                         if (
@@ -71,6 +78,7 @@
         validBuildPosList = [];
         changeGame();
     }
+
 </script>
 
 {#each validBuildPosList as pos, i}
