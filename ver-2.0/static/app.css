@@ -10,6 +10,10 @@
     font-family: BMDOHYEON;
 }
 
+button {
+    font-family: BMDOHYEON;
+}
+
 @media screen and (max-width: 1200px) {
     :root {
         font-size: 12px;

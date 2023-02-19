@@ -69,6 +69,7 @@ export class Player {
         this.#buildingList = [];
 
         this.#hydrogenLabCnt = 0;
+        this.#fuel = 0;
 
         buildingList.forEach(building => {
             if (building.player === this.#index) {

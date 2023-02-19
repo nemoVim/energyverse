@@ -47,8 +47,8 @@ export class Game {
 
         this.#world = new World();
         this.#world.initFuels(fuelList);
-        this.#world.initSea(temp);
         this.#world.initEntities(this.#unitList, this.#buildingList);
+        this.#world.initSea(temp);
 
         this.#round = round;
         this.#turn = turn;
@@ -177,15 +177,15 @@ export class Game {
             totalFuel += fuel;
         }
 
-        this.#temp += totalFuel;
+        this.#temp += totalFuel * 0.1;
 
         //물이 차올라서 파괴되는가?
 
         const underEntityList = this.#world.initSea(this.#temp);
 
         underEntityList.forEach(entity => {
-            if (!checkTech(this.#playerList[entity.player].tech), 1) {
-                game.unitList.splice(game.unitList.indexOf(entity), 1);
+            if (!checkTech(this.#playerList[entity.player].tech, 1)) {
+                this.#unitList.splice(this.#unitList.indexOf(entity), 1);
             }
         });
 
@@ -194,7 +194,9 @@ export class Game {
             this.#playerList[i] = new Player(i, this.#energyList[i], this.#unitList, this.#buildingList, this.#world);
         }
 
-        //저장!!!! 및
+        // 연구소
+
+        //저장!!!!
 
 
     }
