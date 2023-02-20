@@ -7,6 +7,10 @@ const gameSchema = new mongoose.Schema(
             type: [Number],
             default: [],
         },
+        timeList: {
+            type: Array,
+            default: [],
+        },
         fuelList: {
             type: Array,
             default: [],
@@ -35,6 +39,10 @@ const gameSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        stop: {
+            type: Number,
+            default: 0,
+        }
 
     },
     {

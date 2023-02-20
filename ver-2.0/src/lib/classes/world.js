@@ -62,7 +62,6 @@ export class World {
                 }
             });
         }
-        console.log(underEntityList);
         return underEntityList;
     }
 

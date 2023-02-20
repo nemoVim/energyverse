@@ -8,9 +8,11 @@ export class Player {
     static defaultEnergyStorage = 40;
     static defaultUnitStorage = 1;
     static defaultEarn = 10;
+    static defaultLimit = 100;
 
     #index;
     #energy;
+    #time;
     #energyStorage;
     #unitStorage;
     #units;
@@ -23,10 +25,11 @@ export class Player {
 
     #hydrogenLabCnt;
 
-    constructor(index, energy, unitList, buildingList, world) {
+    constructor(index, energy, time, unitList, buildingList, world) {
 
         this.#index = index;
         this.#energy = energy;
+        this.#time = time;
         this.#energyStorage = Player.defaultEnergyStorage;
         this.#unitStorage = Player.defaultUnitStorage;
 
@@ -102,7 +105,6 @@ export class Player {
             }
         });
 
-        console.log(this.#tech);
         if (checkTech(this.#tech, 9)) {
             this.#energyStorage += Player.labEnergyStorage * this.#hydrogenLabCnt;
             this.#unitStorage += Player.labUnitStorage * this.#hydrogenLabCnt;
@@ -141,6 +143,18 @@ export class Player {
         if (this.#energy >= this.#energyStorage) {
             this.#energy = this.#energyStorage;
         }
+    }
+
+    get time() {
+        return this.#time;
+    }
+
+    set time(_time) {
+        this.#time = _time;
+    }
+
+    get limit() {
+        return Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
     }
 
     get energyStorage() {

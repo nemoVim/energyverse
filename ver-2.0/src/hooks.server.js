@@ -1,5 +1,8 @@
 import { SESSION_VALUE } from '$env/static/private';
+import { connectDB } from '$lib/server/db';
 import { redirect } from '@sveltejs/kit';
+
+const db = connectDB();
 
 export const handle = async({event, resolve}) => {
     const session = event.cookies.get('session');

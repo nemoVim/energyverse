@@ -1,10 +1,10 @@
-import { interactDB } from '$lib/server/db';
 import Room from '$lib/models/room';
 import { createRes } from '$lib/utils/requests';
 
 export async function findAllRooms() {
-    const roomList = await interactDB(async () => await Room.find({}));
+    const roomList = await Room.find({});
 
+    console.log(roomList);
     let parsedRoomList = [];
 
     roomList.forEach((value) => {
@@ -15,16 +15,15 @@ export async function findAllRooms() {
         });
     });
 
+    console.log(parsedRoomList);
+
     return createRes(200, parsedRoomList);
 }
 
 export async function findRoomByTitle(title) {
-    const room = await interactDB(
-        async () =>
-            await Room.findOne({
-                title: title,
-            })
-    );
+    const room = await Room.findOne({
+        title: title,
+    });
 
     const roomMsg = {
         title: title,
@@ -36,14 +35,12 @@ export async function findRoomByTitle(title) {
 }
 
 export async function createRoom(title, dealer) {
-    await interactDB(async () => {
-        const room = new Room({
-            title: title,
-            dealer: dealer,
-            playerList: createPlayerList(title),
-        });
-        return await room.save();
+    const room = new Room({
+        title: title,
+        dealer: dealer,
+        playerList: createPlayerList(title),
     });
+    await room.save();
     return createRes(200, 'The room is successfully added!');
 }
 
