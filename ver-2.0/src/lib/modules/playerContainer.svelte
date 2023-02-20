@@ -1,7 +1,7 @@
 <script>
     export let game;
 
-    let limitTimeList = [0, 0, 0, 0, 0, 0];
+    let limitTimeList = [30, 30, 30, 30, 30, 30];
 
     game.playerList.forEach((player, i) => {
         limitTimeList[i] = Math.floor(player.limit);

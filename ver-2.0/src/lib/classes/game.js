@@ -74,6 +74,7 @@ export class Game {
             this.#playerList.push(
                 new Player(
                     idx,
+                    this.#round,
                     energyList[idx],
                     timeList[idx],
                     this.#unitList,
@@ -202,7 +203,7 @@ export class Game {
             } else if (confirm('이전 라운드로 돌아가겠습니까?')) {
                 this.previousRound();
                 this.playerList[this.#turn].time = new Date().getTime();
-                    this.#stop = new Date().getTime();
+                this.#stop = new Date().getTime();
             } else {
                 this.#turn = Game.rotate(this.#turn, 0, 6, 1);
             }
@@ -218,8 +219,8 @@ export class Game {
             if (confirm('정산하겠습니까?')) {
                 this.settle();
                 this.nextRound();
-                this.playerList[this.#turn].time = new Date().getTime();
-                    this.#stop = new Date().getTime();
+                player.time = new Date().getTime();
+                this.#stop = new Date().getTime();
             } else {
                 this.#turn = Game.rotate(this.#turn, 0, 6, -1);
             }
@@ -295,6 +296,7 @@ export class Game {
         for (let i = 0; i < 6; i++) {
             this.#playerList[i] = new Player(
                 i,
+                this.#round,
                 this.#energyList[i],
                 this.#timeList[i],
                 this.#unitList,

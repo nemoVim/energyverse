@@ -8,7 +8,7 @@ export class Player {
     static defaultEnergyStorage = 40;
     static defaultUnitStorage = 1;
     static defaultEarn = 10;
-    static defaultLimit = 100;
+    static defaultLimit = 50;
 
     #index;
     #energy;
@@ -23,32 +23,17 @@ export class Player {
     #tech;
     #fuel;
 
+    #round;
+
     #hydrogenLabCnt;
 
-    constructor(index, energy, time, unitList, buildingList, world) {
-
+    constructor(index, round, energy, time, unitList, buildingList, world) {
         this.#index = index;
+        this.#round = round;
         this.#energy = energy;
         this.#time = time;
         this.#energyStorage = Player.defaultEnergyStorage;
         this.#unitStorage = Player.defaultUnitStorage;
-
-        this.#units = {
-            '일꾼': 0,
-            '풍력': 0,
-            '태양광': 0,
-            '원자력': 0,
-            '미사일': 0,
-        };
-
-        this.#unitList = [];
-
-        unitList.forEach(unit => {
-            if(unit.player === this.#index) {
-                this.#unitList.push(unit);
-                this.#units[unit.kr] += 1;
-            }
-        });
 
         this.#earn = Player.defaultEarn;
 
@@ -105,6 +90,27 @@ export class Player {
             }
         });
 
+        this.#units = {
+            '일꾼': 0,
+            '풍력': 0,
+            '태양광': 0,
+            '원자력': 0,
+            '미사일': 0,
+        };
+
+        this.#unitList = [];
+
+        unitList.forEach(unit => {
+            if(unit.player === this.#index) {
+                this.#unitList.push(unit);
+                this.#units[unit.kr] += 1;
+            }
+        });
+
+        if (checkTech(this.#tech, 13)) {
+            this.#earn += 3 * this.#unitList.length;
+        }
+
         if (checkTech(this.#tech, 9)) {
             this.#energyStorage += Player.labEnergyStorage * this.#hydrogenLabCnt;
             this.#unitStorage += Player.labUnitStorage * this.#hydrogenLabCnt;
@@ -154,7 +160,7 @@ export class Player {
     }
 
     get limit() {
-        const _limit = Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
+        const _limit = this.#round * 10 + Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
         if (_limit < 0) {
             return 0;
         } else {

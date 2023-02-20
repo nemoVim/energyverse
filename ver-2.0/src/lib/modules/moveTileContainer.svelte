@@ -120,8 +120,6 @@
 
     function clickToMove(unit, pos) {
         let entity = game.world.getEntity(pos);
-        console.log(unit);
-        console.log(entity);
         if (entity !== null) {
             if (entity instanceof Building) {
                 game.playerList[unit.player].energy += entity.cost - 5;

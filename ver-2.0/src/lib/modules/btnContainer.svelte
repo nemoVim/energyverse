@@ -122,12 +122,12 @@
                         clickProduceBtn('probe');
                     }}>Probe</button
                 >
-            {:else if checkTech(nowPlayer.tech, 9) && Units['probe'].cost <= nowPlayer.energy && nowPlayer.units['일꾼'] < 4}
+            <!-- {:else if checkTech(nowPlayer.tech, 9) && Units['probe'].cost <= nowPlayer.energy && nowPlayer.units['일꾼'] < 4}
                 <button
                     on:click={() => {
                         clickProduceBtn('probe');
                     }}>Probe</button
-                >
+                > -->
             {/if}
             {#if checkTech(nowPlayer.tech, 7) && Units['windUnit'].cost <= nowPlayer.energy}
                 <button

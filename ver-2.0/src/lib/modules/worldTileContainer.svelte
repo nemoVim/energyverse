@@ -82,6 +82,16 @@
             return 'AI';
         }
     }
+
+    function destroyBuilding(building) {
+        if (confirm('이 건물을 파괴하시겠습니까?')) {
+            game.playerList[building.player].energy += building.cost;
+            game.buildingList.splice(game.buildingList.indexOf(building), 1);
+            dispatch('game', {
+                game: game.gameObj,
+            });
+        }
+    }
 </script>
 
 {#each line as x}
@@ -116,10 +126,14 @@
                     <button
                         class="tile"
                         style={getPositionStyle([x, y, z], 'biome')}
-                        on:click={() =>
-                            console.log(game.world.getBiome([x, y, z]).amount)}
+                        on:click={clickAir}
                     >
                         <img src={fuel} alt="alt" />
+                        <p
+                            style="position: absolute; color: black; font-weight: bold; text-align: center; margin: 0; font-size: .3rem;"
+                        >
+                            {game.world.getBiome([x, y, z]).amount}
+                        </p>
                     </button>
                 {/if}
             {/if}
@@ -137,7 +151,7 @@
             <p
                 style="position: absolute; color: {playerTextColorList[
                     player.index
-                ]}; text-align: center; margin: 0; font-size: .2rem;"
+                ]}; text-align: center; margin: 0; font-size: .15rem;"
             >
                 {unit.kr}
             </p>
@@ -150,11 +164,14 @@
             <button
                 class="tile building"
                 style={getPositionStyle(building.pos, 'building')}
+                on:click={() => {
+                    destroyBuilding(building);
+                }}
             >
                 <p
                     style="position: absolute; color: {playerTextColorList[
                         player.index
-                    ]}; text-align: center; margin: 0; font-size: .2rem;"
+                    ]}; text-align: center; margin: 0; font-size: .15rem;"
                 >
                     {getLabName(building.track)}
                 </p>
@@ -164,11 +181,14 @@
             <button
                 class="tile building"
                 style={getPositionStyle(building.pos, 'building')}
+                on:click={() => {
+                    destroyBuilding(building);
+                }}
             >
                 <p
                     style="position: absolute; color: {playerTextColorList[
                         player.index
-                    ]}; text-align: center; margin: 0; font-size: .2rem;"
+                    ]}; text-align: center; margin: 0; font-size: .15rem;"
                 >
                     {building.kr}
                 </p>
