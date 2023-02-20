@@ -33,10 +33,10 @@
                     const biome = game.world.getBiome(pos);
 
                     if (biome.en === 'fuel') return;
-            if (biome.en === 'mountain' && unitEn === 'probe' && !checkTech(nowPlayer.tech, 0)) return false;
-            if (biome.en === 'mountain' && unitEn !== 'probe' && !checkTech(nowPlayer.tech, 3)) return false;
-            if (biome.en === 'water' && unitEn === 'probe' && !checkTech(nowPlayer.tech, 1)) return false;
-            if (biome.en === 'water' && unitEn !== 'probe' && !checkTech(nowPlayer.tech, 2)) return false;
+            if (biome.en === 'mountain' && unitEn === 'probe' && !checkTech(nowPlayer.tech, 3)) return false;
+            if (biome.en === 'mountain' && unitEn !== 'probe' && !checkTech(nowPlayer.tech, 2)) return false;
+            if (biome.en === 'water' && unitEn === 'probe' && !checkTech(nowPlayer.tech, 5)) return false;
+            if (biome.en === 'water' && unitEn !== 'probe' && !checkTech(nowPlayer.tech, 4)) return false;
 
                     if (game.world.getEntity(pos) !== null) return;
 

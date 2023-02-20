@@ -42,19 +42,21 @@
         loading = true;
 
         console.log(game);
-        game.nextTurn();
+        // game.nextTurn();
 
-        game.turn = Game.rotate(game.turn, 0, 6, -1);
-        if (Game.rotate(game.turn, 0, 6, 1) === game.first) {
-            game.round -= 1;
-        }
+        // game.turn = Game.rotate(game.turn, 0, 6, -1);
+        // if (Game.rotate(game.turn, 0, 6, 1) === game.first) {
+        //     game.round -= 1;
+        // }
 
         const resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
 
-        game.turn = Game.rotate(game.turn, 0, 6, 1);
-        if (game.turn === game.first) {
-            game.round += 1;
-        }
+        // game.turn = Game.rotate(game.turn, 0, 6, 1);
+        // if (game.turn === game.first) {
+        //     game.round += 1;
+        // }
+
+        game.nextTurn();
 
         game = new Game(game.gameObj);
 

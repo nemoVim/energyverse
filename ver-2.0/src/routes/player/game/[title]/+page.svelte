@@ -1,9 +1,32 @@
 <script>
+    import { browser } from '$app/environment';
     import { Game } from '$lib/classes/game';
+    import { getReq } from '$lib/utils/requests';
 
     export let data;
-    const game = new Game(data.game);
+    let game = new Game(data.game);
 
+    async function longPolling() {
+        try {
+            const resMsg = await getReq(
+                fetch,
+                `/api/game/change?title=${game.title}`
+            );
+            console.log(resMsg);
+            game = new Game(resMsg);
+            console.log('end');
+            await longPolling();
+        } catch (e) {
+            console.log('error');
+            console.log(e);
+            setTimeout(async () => {await longPolling()}, 1000);
+        }
+    }
+
+    if (browser) {
+        console.log('startPolling');
+        longPolling();
+    }
 </script>
 
 <h1>{game.title}</h1>

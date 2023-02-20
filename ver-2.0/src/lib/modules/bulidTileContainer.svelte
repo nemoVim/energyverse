@@ -32,12 +32,12 @@
                     if (game.world.getBiome(pos).en === 'fuel') return;
                     if (
                         game.world.getBiome(pos).en === 'mountain' &&
-                        !checkTech(nowPlayer.tech, 0)
+                        !checkTech(nowPlayer.tech, 3)
                     )
                         return;
                     if (
                         game.world.getBiome(pos).en === 'water' &&
-                        !checkTech(nowPlayer.tech, 1)
+                        !checkTech(nowPlayer.tech, 5)
                     )
                         return;
                     if (game.world.getEntity(pos) !== null) {

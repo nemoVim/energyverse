@@ -202,7 +202,7 @@ export class Game {
                 }
             } else if (confirm('이전 라운드로 돌아가겠습니까?')) {
                 this.previousRound();
-                this.playerList[this.#turn].time = new Date().getTime();
+                this.#playerList[this.#turn].time = new Date().getTime();
                 this.#stop = new Date().getTime();
             } else {
                 this.#turn = Game.rotate(this.#turn, 0, 6, 1);
@@ -219,7 +219,7 @@ export class Game {
             if (confirm('정산하겠습니까?')) {
                 this.settle();
                 this.nextRound();
-                player.time = new Date().getTime();
+                this.#playerList[this.#turn].time = new Date().getTime();
                 this.#stop = new Date().getTime();
             } else {
                 this.#turn = Game.rotate(this.#turn, 0, 6, -1);
@@ -230,6 +230,20 @@ export class Game {
     }
 
     settle() {
+
+        // 자원 소비를 위해
+        for (let i = 0; i < 6; i++) {
+            this.#playerList[i] = new Player(
+                i,
+                this.#round,
+                this.#energyList[i],
+                this.#timeList[i],
+                this.#unitList,
+                this.#buildingList,
+                this.#world
+            );
+        }
+
         let totalFuel = 0;
 
         for (let i = 0; i < 6; i++) {
@@ -246,7 +260,7 @@ export class Game {
         const underEntityList = this.#world.initSea(this.#temp);
 
         underEntityList.forEach((entity) => {
-            if (!checkTech(this.#playerList[entity.player].tech, 1)) {
+            if (!checkTech(this.#playerList[entity.player].tech, 5)) {
                 if (entity instanceof Building) {
                     this.#buildingList.splice(
                         this.#buildingList.indexOf(entity),
@@ -290,26 +304,11 @@ export class Game {
         if (maxPlayer !== null) {
             this.#energyList[maxPlayer] += 15;
         }
-
-        console.log(this.#buildingList);
-        //돈 재정산
-        for (let i = 0; i < 6; i++) {
-            this.#playerList[i] = new Player(
-                i,
-                this.#round,
-                this.#energyList[i],
-                this.#timeList[i],
-                this.#unitList,
-                this.#buildingList,
-                this.#world
-            );
-        }
     }
 
     previousRound() {
         this.#round -= 1;
         // this.#first = Game.rotate(this.#first, 0, 6, -1);
-        this.#turn = this.#first;
     }
 
     nextRound() {

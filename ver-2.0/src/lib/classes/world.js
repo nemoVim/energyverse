@@ -59,6 +59,11 @@ export class World {
                             en: 'water',
                         })
                     );
+                } else if (this.getBiome(pos).en === 'water') {
+                    if (this.getEntity(pos) !== null) {
+                        underEntityList.push(this.getEntity(pos));
+                    }
+
                 }
             });
         }

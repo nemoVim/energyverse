@@ -78,25 +78,25 @@
             if (
                 biome.en === 'mountain' &&
                 unit.en === 'probe' &&
-                !checkTech(nowPlayer.tech, 0)
+                !checkTech(nowPlayer.tech, 3)
             )
                 return false;
             if (
                 biome.en === 'mountain' &&
                 unit.en !== 'probe' &&
-                !checkTech(nowPlayer.tech, 3)
+                !checkTech(nowPlayer.tech, 2)
             )
                 return false;
             if (
                 biome.en === 'water' &&
                 unit.en === 'probe' &&
-                !checkTech(nowPlayer.tech, 1)
+                !checkTech(nowPlayer.tech, 5)
             )
                 return false;
             if (
                 biome.en === 'water' &&
                 unit.en !== 'probe' &&
-                !checkTech(nowPlayer.tech, 2)
+                !checkTech(nowPlayer.tech, 4)
             )
                 return false;
 
