@@ -290,11 +290,13 @@ export class Game {
             this.#energyList[maxPlayer] += 15;
         }
 
+        console.log(this.#buildingList);
         //돈 재정산
         for (let i = 0; i < 6; i++) {
             this.#playerList[i] = new Player(
                 i,
                 this.#energyList[i],
+                this.#timeList[i],
                 this.#unitList,
                 this.#buildingList,
                 this.#world

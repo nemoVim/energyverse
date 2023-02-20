@@ -4,6 +4,8 @@
     import { getPositionStyle } from '$lib/utils/posFunctions';
     import { createEventDispatcher } from 'svelte';
     import { checkTech } from '$lib/classes/tech';
+    import { Building } from '$lib/classes/buildings';
+    import { Unit } from '$lib/classes/units';
 
     export let game;
     export let clickedUnit = null;
@@ -73,10 +75,30 @@
 
             const nowPlayer = game.playerList[game.turn];
 
-            if (biome.en === 'mountain' && unit.en === 'probe' && !checkTech(nowPlayer.tech, 0)) return false;
-            if (biome.en === 'mountain' && unit.en !== 'probe' && !checkTech(nowPlayer.tech, 3)) return false;
-            if (biome.en === 'water' && unit.en === 'probe' && !checkTech(nowPlayer.tech, 1)) return false;
-            if (biome.en === 'water' && unit.en !== 'probe' && !checkTech(nowPlayer.tech, 2)) return false;
+            if (
+                biome.en === 'mountain' &&
+                unit.en === 'probe' &&
+                !checkTech(nowPlayer.tech, 0)
+            )
+                return false;
+            if (
+                biome.en === 'mountain' &&
+                unit.en !== 'probe' &&
+                !checkTech(nowPlayer.tech, 3)
+            )
+                return false;
+            if (
+                biome.en === 'water' &&
+                unit.en === 'probe' &&
+                !checkTech(nowPlayer.tech, 1)
+            )
+                return false;
+            if (
+                biome.en === 'water' &&
+                unit.en !== 'probe' &&
+                !checkTech(nowPlayer.tech, 2)
+            )
+                return false;
 
             if (game.world.getBiome(pos).en === 'fuel') {
                 return false;
@@ -97,14 +119,24 @@
     }
 
     function clickToMove(unit, pos) {
-        unit.pos = pos;
         let entity = game.world.getEntity(pos);
+        console.log(unit);
+        console.log(entity);
         if (entity !== null) {
-            game.playerList[unit.player].energy += entity.cost - 5;
-            game.unitList.splice(game.unitList.indexOf(entity), 1);
+            if (entity instanceof Building) {
+                game.playerList[unit.player].energy += entity.cost - 5;
+                game.buildingList.splice(game.buildingList.indexOf(entity), 1);
+            } else if (entity instanceof Unit) {
+                game.unitList.splice(game.unitList.indexOf(entity), 1);
+            }
+
             if (unit.en === 'missile') {
                 game.unitList.splice(game.unitList.indexOf(unit), 1);
+            } else {
+                unit.pos = pos;
             }
+        } else {
+            unit.pos = pos;
         }
         validMovePosList = [];
         changeGame();
@@ -124,7 +156,6 @@
 {/each}
 
 <style>
-
     .tile {
         display: flex;
         justify-content: center;
@@ -138,6 +169,6 @@
 
     .move > img {
         width: 2rem;
-        margin: .433rem .5rem;
+        margin: 0.433rem 0.5rem;
     }
 </style>

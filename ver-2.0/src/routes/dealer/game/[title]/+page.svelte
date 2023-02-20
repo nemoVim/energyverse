@@ -41,7 +41,9 @@
     async function nextTurn() {
         loading = true;
 
+        console.log(game);
         game.nextTurn();
+
         game.turn = Game.rotate(game.turn, 0, 6, -1);
         if (Game.rotate(game.turn, 0, 6, 1) === game.first) {
             game.round -= 1;

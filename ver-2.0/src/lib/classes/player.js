@@ -154,7 +154,12 @@ export class Player {
     }
 
     get limit() {
-        return Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
+        const _limit = Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
+        if (_limit < 0) {
+            return 0;
+        } else {
+            return _limit;
+        }
     }
 
     get energyStorage() {

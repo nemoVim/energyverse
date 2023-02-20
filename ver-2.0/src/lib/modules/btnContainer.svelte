@@ -1,5 +1,5 @@
 <script>
-    import { Buildings } from '$lib/classes/buildings';
+    import { Buildings, Lab } from '$lib/classes/buildings';
     import { checkTech } from '$lib/classes/tech';
     import { Units } from '$lib/classes/units';
     import { createEventDispatcher } from 'svelte';
