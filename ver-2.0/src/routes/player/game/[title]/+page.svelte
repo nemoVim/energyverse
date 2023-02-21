@@ -6,6 +6,19 @@
     export let data;
     let game = new Game(data.game);
 
+    let limitTimeList = [120, 120, 120, 120, 120, 120];
+
+    game.playerList.forEach((player, i) => {
+        limitTimeList[i] = Math.floor(player.limit);
+    });
+
+    setInterval(() => {
+        if (game.stop === 0) {
+            const player = game.playerList[game.turn];
+            limitTimeList[player.index] = Math.floor(player.limit);
+        }
+    }, 100);
+
     async function longPolling() {
         try {
             const resMsg = await getReq(

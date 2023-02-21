@@ -8,7 +8,7 @@ export class Player {
     static defaultEnergyStorage = 40;
     static defaultUnitStorage = 1;
     static defaultEarn = 10;
-    static defaultLimit = 50;
+    static defaultLimit = 120;
 
     #index;
     #energy;
@@ -160,7 +160,7 @@ export class Player {
     }
 
     get limit() {
-        const _limit = this.#round * 10 + Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
+        const _limit = Player.defaultLimit - (new Date().getTime() - this.#time)/1000;
         if (_limit < 0) {
             return 0;
         } else {

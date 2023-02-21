@@ -126,82 +126,108 @@
     </div>
 {/if}
 
-<h1>{game.title}</h1>
-
-<hr />
-
 <BtnContainer {game} on:build={clickedBuild} on:produce={clickedProduce} />
 
-<div id="gameContainer">
+<div id="infoContainer">
     <div>
-        <div>
-            <p>Round: {game.round}</p>
-            <p>Turn: {game.turn}</p>
-            <p>Temp: {game.temp}</p>
-            <p>First: {game.first}</p>
-
-            <button on:click={previousTurn}>이전 턴</button>
-            <button on:click={nextTurn}>다음 턴</button>
-            <button on:click={gameStart}>시작</button>
-            <button on:click={gameStop}>정지</button>
-        </div>
-        <div id="tileContainer">
-            <div>
-                <WorldTileContainer
-                    {game}
-                    on:air={clickAir}
-                    on:move={clickUnit}
-                    on:game={refreshGame}
-                />
-                <MoveTileContainer {game} {clickedUnit} on:game={refreshGame} />
-                <BulidTileContainer
-                    {game}
-                    {clickedBuildObj}
-                    on:game={refreshGame}
-                />
-                <ProduceTileContainer
-                    {game}
-                    {clickedProduceEn}
-                    on:game={refreshGame}
-                />
-            </div>
-        </div>
+        <p>ROOM_{game.title} / {Math.round(game.temp)} ℃ ({Math.round(game.temp) + 15} ℃)</p>
+        <hr>
+        <p>Round {game.round} / {game.title}{game.turn+1} Turn</p>
     </div>
 
-    <PlayerContainer {game} />
+    <button on:click={previousTurn}>이전 턴</button>
+    <button on:click={nextTurn}>다음 턴</button>
+    <button on:click={gameStart}>시작</button>
+    <button on:click={gameStop}>정지</button>
 </div>
 
+<div id="gameContainer">
+    <div id="tileContainer">
+        <WorldTileContainer
+            {game}
+            on:air={clickAir}
+            on:move={clickUnit}
+            on:game={refreshGame}
+        />
+        <MoveTileContainer {game} {clickedUnit} on:game={refreshGame} />
+        <BulidTileContainer {game} {clickedBuildObj} on:game={refreshGame} />
+        <ProduceTileContainer {game} {clickedProduceEn} on:game={refreshGame} />
+    </div>
+</div>
+
+<PlayerContainer {game} />
+
 <style>
+
+    button {
+        font-size: 1.8rem;
+        padding: .6rem 1.8rem;
+        margin: .5rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: black solid .2rem;
+        border-radius: .5rem;
+    }
+
+    button:hover {
+        background-color: rgba(230, 230, 230, 0.9);
+        cursor: pointer;
+    }
+
     #loadingDiv {
         z-index: 100;
         display: flex;
         position: fixed;
         left: 0;
         top: 0;
-        width: 100vw;
-        height: 100vh;
+        width: -webkit-fill-available;
+        height: -webkit-fill-available;
         justify-content: center;
         align-items: center;
         background-color: rgba(0, 0, 0, 0.4);
     }
 
     #loadingDiv > p {
-        font-size: 10rem;
+        font-size: 5rem;
         color: white;
         text-shadow: rgb(50, 50, 50) 0 0.3rem 0.5rem;
     }
 
-    #tileContainer {
+    #infoContainer {
         display: flex;
-        justify-content: center;
-        margin: 40rem;
+        position: fixed;
+        top: 0;
+        left: 38%;
+        z-index: 99;
+        margin: .5rem;
     }
 
-    #tileContainer > div {
-        position: relative;
+    #infoContainer > button {
+        height: fit-content;
+    }
+
+    #infoContainer > div {
+        background-color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+        border: solid black .2rem;
+        border-radius: .5rem;
+        padding: 1rem;
+        margin: .5rem;
+    }
+
+    #infoContainer > div > p {
+        margin: .5rem;
     }
 
     #gameContainer {
+        width: 100vw;
         display: flex;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        padding: 40rem;
+    }
+
+    #tileContainer {
+        position: relative;
     }
 </style>

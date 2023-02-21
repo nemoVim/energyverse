@@ -44,40 +44,42 @@
 {#if showBuildDiv}
     <div class="layer" on:keypress={() => {}} on:click={toggleBuildDiv}>
         <div>
-            {#if Buildings['factory'].cost <= nowPlayer.energy}
-                <button
-                    on:click={() => {
-                        clickBuildBtn('factory');
-                    }}>Factory</button
-                >
-            {/if}
-            {#if Buildings['thermalPower'].cost <= nowPlayer.energy}
-                <button
-                    on:click={() => {
-                        clickBuildBtn('thermalPower');
-                    }}>thermal Power</button
-                >
-            {/if}
-            {#if checkTech(nowPlayer.tech, 6) && Buildings['windPower'].cost <= nowPlayer.energy}
-                <button
-                    on:click={() => {
-                        clickBuildBtn('windPower');
-                    }}>wind Power</button
-                >
-            {/if}
-            {#if checkTech(nowPlayer.tech, 10) && Buildings['solarPower'].cost <= nowPlayer.energy}
-                <button
-                    on:click={() => {
-                        clickBuildBtn('solarPower');
-                    }}>solar Power</button
-                >
-            {/if}
-            {#if checkTech(nowPlayer.tech, 14) && Buildings['atomicPower'].cost <= nowPlayer.energy}
-                <button
-                    on:click={() => {
-                        clickBuildBtn('atomicPower');
-                    }}>atomic Power</button
-                >
+            {#if nowPlayer.units['일꾼'] >= 1}
+                {#if Buildings['factory'].cost <= nowPlayer.energy}
+                    <button
+                        on:click={() => {
+                            clickBuildBtn('factory');
+                        }}>공장</button
+                    >
+                {/if}
+                {#if Buildings['thermalPower'].cost <= nowPlayer.energy}
+                    <button
+                        on:click={() => {
+                            clickBuildBtn('thermalPower');
+                        }}>화력 발전소</button
+                    >
+                {/if}
+                {#if checkTech(nowPlayer.tech, 6) && Buildings['windPower'].cost <= nowPlayer.energy}
+                    <button
+                        on:click={() => {
+                            clickBuildBtn('windPower');
+                        }}>풍력 발전소</button
+                    >
+                {/if}
+                {#if checkTech(nowPlayer.tech, 10) && Buildings['solarPower'].cost <= nowPlayer.energy}
+                    <button
+                        on:click={() => {
+                            clickBuildBtn('solarPower');
+                        }}>태양광 발전소</button
+                    >
+                {/if}
+                {#if checkTech(nowPlayer.tech, 14) && Buildings['atomicPower'].cost <= nowPlayer.energy}
+                    <button
+                        on:click={() => {
+                            clickBuildBtn('atomicPower');
+                        }}>원자력 발전소</button
+                    >
+                {/if}
             {/if}
         </div>
 
@@ -86,27 +88,27 @@
                 <button
                     on:click={() => {
                         clickBuildBtn('lab', 'material');
-                    }}>material Lab</button
+                    }}>신소재 연구소</button
                 >
                 <button
                     on:click={() => {
                         clickBuildBtn('lab', 'hydrogen');
-                    }}>hydrogen Lab</button
+                    }}>수소 연구소</button
                 >
                 <button
                     on:click={() => {
                         clickBuildBtn('lab', 'grid');
-                    }}>grid Lab</button
+                    }}>그리드 연구소</button
                 >
                 <button
                     on:click={() => {
                         clickBuildBtn('lab', 'environment');
-                    }}>environment Lab</button
+                    }}>환경기후 연구소</button
                 >
                 <button
                     on:click={() => {
                         clickBuildBtn('lab', 'ai');
-                    }}>ai Lab</button
+                    }}>AI 연구소</button
                 >
             {/if}
         </div>
@@ -120,9 +122,9 @@
                 <button
                     on:click={() => {
                         clickProduceBtn('probe');
-                    }}>Probe</button
+                    }}>일꾼</button
                 >
-            <!-- {:else if checkTech(nowPlayer.tech, 9) && Units['probe'].cost <= nowPlayer.energy && nowPlayer.units['일꾼'] < 4}
+                <!-- {:else if checkTech(nowPlayer.tech, 9) && Units['probe'].cost <= nowPlayer.energy && nowPlayer.units['일꾼'] < 4}
                 <button
                     on:click={() => {
                         clickProduceBtn('probe');
@@ -133,28 +135,28 @@
                 <button
                     on:click={() => {
                         clickProduceBtn('windUnit');
-                    }}>wind Unit</button
+                    }}>재블린</button
                 >
             {/if}
             {#if checkTech(nowPlayer.tech, 11) && Units['solarUnit'].cost <= nowPlayer.energy}
                 <button
                     on:click={() => {
                         clickProduceBtn('solarUnit');
-                    }}>solar Unit</button
+                    }}>윈체스터</button
                 >
             {/if}
             {#if checkTech(nowPlayer.tech, 15) && Units['atomicUnit'].cost <= nowPlayer.energy}
                 <button
                     on:click={() => {
                         clickProduceBtn('atomicUnit');
-                    }}>atomic Unit</button
+                    }}>트리니티</button
                 >
             {/if}
             {#if checkTech(nowPlayer.tech, 17) && Units['missile'].cost <= nowPlayer.energy}
                 <button
                     on:click={() => {
                         clickProduceBtn('missile');
-                    }}>missile</button
+                    }}>ICBM</button
                 >
             {/if}
         {/if}
@@ -162,17 +164,27 @@
 {/if}
 
 <style>
-    button {
-        font-size: 2rem;
-        padding: 1rem;
-        margin: 1rem;
-    }
 
     #btnContainer {
         position: fixed;
-        bottom: 2rem;
-        left: 2rem;
+        bottom: 0;
+        left: 40%;
         z-index: 1;
+        margin: .5rem;
+    }
+
+    button {
+        font-size: 2rem;
+        padding: .8rem 2.2rem;
+        margin: .5rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: black solid .2rem;
+        border-radius: .5rem;
+    }
+
+    button:hover {
+        background-color: rgba(230, 230, 230, 0.9);
+        cursor: pointer;
     }
 
     .layer {

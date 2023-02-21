@@ -8,6 +8,11 @@
 :root {
     font-size: 14px;
     font-family: BMDOHYEON;
+    user-select: none;
+}
+
+body {
+    margin: 0;
 }
 
 button {
