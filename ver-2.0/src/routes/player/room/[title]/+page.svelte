@@ -8,10 +8,10 @@
 </script>
 
 <div id="pRT">
-    <h1 id="playerRoomTitle">{room.title} Room / 딜러: {room.dealer}</h1>
+    <h1 id="playerRoomTitle">ROOM {room.title} / {room.dealer} 딜러</h1>
 </div>  
 
-<hr id="seperator" />
+<!-- <hr id="seperator" /> -->
 
 <div id="pSB">
     {#each room.playerList as player, i}
@@ -50,22 +50,34 @@
     }
 
     #playerSelectButton{
-        width: 30rem;
+        justify-content: center;
+        width: 25rem;
         margin: 1rem;
-        padding: 3rem;
-        height: 15rem;
-        font-size: 1.5rem;
-        border-radius: 1rem;
-        border:solid black;
+        padding: 4rem;
+        font-size: 2.5rem;
+        border-radius: 0.5rem;
+        border: solid black 0.25rem;
         background-color: #ffffff;
-        box-shadow: 0.3rem 0.3rem 0.3rem     rgb(173, 173, 173);
+        box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
         color: black;
         text-decoration: none;
     }
+
+    #playerSelectButton:hover {
+        background-color: #ecfaff;
+        cursor: pointer;
+    }
     
+    #playerSelectButton:active {
+        box-shadow: 0 0 0 1px #ffffff inset,
+            0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+            0 0 0 1px rgba(0, 0, 0, 0.4);
+    }
+
     #pSB{
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
+        margin-top: 2rem;
     }
 </style>
