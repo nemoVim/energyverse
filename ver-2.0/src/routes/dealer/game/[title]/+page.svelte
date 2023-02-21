@@ -50,6 +50,7 @@
         // }
 
         const resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
+        const _resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
 
         // game.turn = Game.rotate(game.turn, 0, 6, 1);
         // if (game.turn === game.first) {
@@ -61,6 +62,16 @@
         game = new Game(game.gameObj);
 
         loading = false;
+    }
+
+    let isPlaying = false;
+
+    $: {
+        if (game.stop !== 0) {
+            isPlaying = false;
+        } else {
+            isPlaying = true;
+        }
     }
 
     async function gameStart() {
@@ -130,15 +141,23 @@
 
 <div id="infoContainer">
     <div>
-        <p>ROOM_{game.title} / {(game.temp).toFixed(1)} ℃ ({(game.temp).toFixed(1) + 15} ℃)</p>
-        <hr>
-        <p>Round {game.round} / {game.title}{game.turn+1} Turn</p>
+        <p>
+            ROOM_{game.title} / {game.temp.toFixed(1)} ℃ ({game.temp.toFixed(
+                1
+            ) + 15} ℃)
+        </p>
+        <hr />
+        <p>Round {game.round} / {game.title}{game.turn + 1} Turn</p>
     </div>
 
     <button on:click={previousTurn}>이전 턴</button>
     <button on:click={nextTurn}>다음 턴</button>
-    <button on:click={gameStart}>시작</button>
-    <button on:click={gameStop}>정지</button>
+
+    {#if isPlaying}
+        <button on:click={gameStop}>정지</button>
+    {:else}
+        <button on:click={gameStart}>시작</button>
+    {/if}
 </div>
 
 <div id="gameContainer">
@@ -158,14 +177,13 @@
 <PlayerContainer {game} />
 
 <style>
-
     button {
         font-size: 1.8rem;
-        padding: .6rem 1.8rem;
-        margin: .5rem;
+        padding: 0.6rem 1.8rem;
+        margin: 0.5rem;
         background-color: rgba(255, 255, 255, 0.9);
-        border: black solid .2rem;
-        border-radius: .5rem;
+        border: black solid 0.2rem;
+        border-radius: 0.5rem;
     }
 
     button:hover {
@@ -198,7 +216,7 @@
         top: 0;
         left: 38%;
         z-index: 99;
-        margin: .5rem;
+        margin: 0.5rem;
     }
 
     #infoContainer > button {
@@ -208,14 +226,14 @@
     #infoContainer > div {
         background-color: rgba(255, 255, 255, 0.9);
         font-size: 1.2rem;
-        border: solid black .2rem;
-        border-radius: .5rem;
+        border: solid black 0.2rem;
+        border-radius: 0.5rem;
         padding: 1rem;
-        margin: .5rem;
+        margin: 0.5rem;
     }
 
     #infoContainer > div > p {
-        margin: .5rem;
+        margin: 0.5rem;
     }
 
     #gameContainer {

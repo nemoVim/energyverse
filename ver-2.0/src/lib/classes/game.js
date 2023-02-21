@@ -280,17 +280,16 @@ export class Game {
             posList = posList.concat([Tilemap.move(pos, j, 1)]);
         });
 
-        const playerUnitList = [0, 0, 0, 0, 0, 0];
+        const playerEntityList = [0, 0, 0, 0, 0, 0];
 
         posList.forEach((pos) => {
             const entity = this.#world.getEntity(pos);
             if (entity === null) return;
-
-            playerUnitList[entity.player] += 1;
+            playerEntityList[entity.player] += 1;
         });
 
         let maxUnitCnt = 0;
-        const maxPlayer = playerUnitList.reduce((prev, value, index) => {
+        const maxPlayer = playerEntityList.reduce((prev, value, index) => {
             if (value > maxUnitCnt) {
                 maxUnitCnt = value;
                 return index;
@@ -302,7 +301,7 @@ export class Game {
         }, null);
 
         if (maxPlayer !== null) {
-            this.#energyList[maxPlayer] += 15;
+            this.#playerList[maxPlayer].energy += 15;
         }
     }
 

@@ -10,9 +10,11 @@ export async function load({ locals }) {
 export const actions = {
     default: async ({ cookies, request }) => {
         const data = await request.formData();
+        console.log(data.get('password'));
         if (data.get('password') === DEALER_PW) {
             cookies.set('session', SESSION_VALUE, {
-                path: '/'
+                path: '/',
+                secure: false,
             });
             throw redirect(303, `/dealer`);
         } else {
