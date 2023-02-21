@@ -130,7 +130,7 @@
 
 <div id="infoContainer">
     <div>
-        <p>ROOM_{game.title} / {Math.round(game.temp)} ℃ ({Math.round(game.temp) + 15} ℃)</p>
+        <p>ROOM_{game.title} / {(game.temp).toFixed(1)} ℃ ({(game.temp).toFixed(1) + 15} ℃)</p>
         <hr>
         <p>Round {game.round} / {game.title}{game.turn+1} Turn</p>
     </div>

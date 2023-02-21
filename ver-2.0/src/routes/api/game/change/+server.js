@@ -9,13 +9,13 @@ export async function GET({ url }) {
 
 function watchChange(title) {
     return new Promise((resolve) => {
-            const stream = Game.watch({
-                title: title,
-            }).on('change', async (data) => {
-                console.log('what?');
+            const stream = Game.watch().on('change', async (data) => {
                 const game = await Game.findById(data.documentKey._id);
-                stream.close();
-                resolve(createRes(200, game));
+
+                if (game.title === title) {
+                    stream.close();
+                    resolve(createRes(200, game));
+                }
             });
     });
 }

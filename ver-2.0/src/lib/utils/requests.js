@@ -9,6 +9,7 @@ export async function postReq(fetch, path, data) {
         method: 'post',
         headers: {
             'Content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify(data),
     });
