@@ -147,6 +147,8 @@ export class AtomicPower extends PowerPlant {
             let biome = world.getBiome(pos);
             if (biome.en === 'water') {
                 return true;
+            } else {
+                return prev;
             }
         }, false);
     }
