@@ -84,7 +84,11 @@
     }
 
     function destroyBuilding(building) {
-        if (confirm('이 건물을 파괴하시겠습니까?')) {
+        let floor = 1;
+        if (building.floor !== undefined) {
+            floor = building.floor;
+        }
+        if (confirm(`이 건물을 파괴하시겠습니까? (${floor}층)`)) {
             game.playerList[building.player].energy += building.cost;
             game.buildingList.splice(game.buildingList.indexOf(building), 1);
             dispatch('game', {
@@ -171,7 +175,7 @@
                 <p
                     style="position: absolute; color: {playerTextColorList[
                         player.index
-                    ]}; text-align: center; margin: 0; font-size: .15rem;"
+                    ]}; text-align: center; margin: 0;"
                 >
                     {getLabName(building.track)}
                 </p>
@@ -188,7 +192,7 @@
                 <p
                     style="position: absolute; color: {playerTextColorList[
                         player.index
-                    ]}; text-align: center; margin: 0; font-size: .15rem;"
+                    ]}; text-align: center; margin: 0;"
                 >
                     {building.kr}
                 </p>
@@ -216,6 +220,10 @@
 
     .tile > img {
         width: 3rem;
+    }
+
+    .tile > p {
+        font-size: .15rem;
     }
 
     .unit > img,

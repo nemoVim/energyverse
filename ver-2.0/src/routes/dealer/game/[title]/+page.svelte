@@ -112,7 +112,7 @@
 
     function clickUnit(event) {
         clickedBuildObj = null;
-        clickedProduceEn = null;
+        clickedProduceObj = null;
         clickedUnit = event.detail.unit;
     }
 
