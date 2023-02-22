@@ -16,6 +16,7 @@
     #ddd {
         display: flex;
         justify-content: center;
+        margin-top: 5rem;
     }
     #LP {
         display: flex;
@@ -28,15 +29,15 @@
     h1 {
         display: flex;
         justify-content: center;
-        font-size: 2.5rem;
-        margin-bottom: 20vh;
         align-items: center;
-        height: 6rem;
-        border-radius: 15px;
-        border: thick double #32a1ce;
-        width: 40%;
+        padding: 2rem 7rem;
         background-color: white;
-
+        border: .7rem solid #37aad7;
+        border-radius: 7rem;
+        font-size: 3.5rem;
+        box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
+        margin: 2rem;
+        margin-top: 5rem;
     }
 
     #content { 
@@ -54,7 +55,7 @@
         box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
         outline: none;
         box-sizing: border-box;
-        border: solid black .25rem;
+        border: solid black .3rem;
         padding: .6rem 1.5rem;
     }
 
@@ -65,7 +66,7 @@
         letter-spacing: 0.1rem;
         background-color: #f0f0f0;
         border-radius: 0rem 1rem 1rem 0rem;
-        border: solid black .25rem;
+        border: solid black .3rem;
         border-left: none;
         box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
         padding: 1rem;

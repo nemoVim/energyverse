@@ -4,7 +4,6 @@ import { createRes } from '$lib/utils/requests';
 export async function findAllRooms() {
     const roomList = await Room.find({});
 
-    console.log(roomList);
     let parsedRoomList = [];
 
     roomList.forEach((value) => {
@@ -14,8 +13,6 @@ export async function findAllRooms() {
             playerList: value.playerList,
         });
     });
-
-    console.log(parsedRoomList);
 
     return createRes(200, parsedRoomList);
 }

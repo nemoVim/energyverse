@@ -159,6 +159,7 @@ export class Game {
                 player: building.player,
                 pos: building.pos,
                 track: building.track || null,
+                floor: building.floor || null,
             });
         });
 

@@ -11,8 +11,6 @@
     <h1 id="playerRoomTitle">ROOM {room.title} / {room.dealer} 딜러</h1>
 </div>  
 
-<!-- <hr id="seperator" /> -->
-
 <div id="pSB">
     {#each room.playerList as player, i}
     <button id="playerSelectButton" 
@@ -30,18 +28,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 40%;
-        height: 6rem;
-        border: thick double #32a1ce;
-        border-radius:1rem;
+        padding: 2rem 7rem;
         background-color: white;
-        font-size: 2.5rem;
-    }
-
-    #seperator{
-        border:0;
-        height:2px;
-        background: #000;
+        border: .7rem solid #37aad7;
+        border-radius: 7rem;
+        font-size: 3.5rem;
+        box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
+        margin: 2rem;
+        margin-top: 5rem;
     }
 
     #pRT{
@@ -51,12 +45,12 @@
 
     #playerSelectButton{
         justify-content: center;
-        width: 25rem;
+        width: 30rem;
         margin: 1rem;
         padding: 4rem;
-        font-size: 2.5rem;
+        font-size: 3rem;
         border-radius: 0.5rem;
-        border: solid black 0.25rem;
+        border: solid black 0.4rem;
         background-color: #ffffff;
         box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
         color: black;
@@ -64,7 +58,7 @@
     }
 
     #playerSelectButton:hover {
-        background-color: #ecfaff;
+        background-color: #e8f8ff;
         cursor: pointer;
     }
     

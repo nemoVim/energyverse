@@ -8,8 +8,6 @@
     <h1 id="playerLobbyTitle">플레이어 로비</h1>
 </div>
 
-<!-- <hr id="seperator" /> -->
-
 <div id="roomContainer">
     {#each roomList as room}
         <a class="roomAnchor" href="/player/room/{room.title}">
@@ -28,6 +26,21 @@
         justify-content: center;
     }
 
+    #playerLobbyTitle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 7rem;
+        background-color: white;
+        border: .7rem solid #37aad7;
+        border-radius: 7rem;
+        font-size: 3.5rem;
+        box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
+        margin: 2rem;
+        margin-top: 5rem;
+    }
+
+
     #roomContainer {
         display: flex;
         margin-top: 2rem;
@@ -42,7 +55,7 @@
         padding: 2rem;
         font-size: 1.5rem;
         border-radius: 0.5rem;
-        border: solid black 0.25rem;
+        border: solid black 0.4rem;
         background-color: #ffffff;
         box-shadow: 0.3rem 0.3rem 0.3rem rgb(173, 173, 173);
         color: black;
@@ -50,7 +63,7 @@
     }
 
     .roomAnchor:hover {
-        background-color: #ecfaff;
+        background-color: #e8f8ff;
     }
 
     .roomAnchor:active {
@@ -67,25 +80,8 @@
         margin: 1rem 0;
     }
 
-    #playerLobbyTitle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 40%;
-        height: 6rem;
-        border: thick double #32a1ce;
-        border-radius: 1rem;
-        background-color: white;
-        font-size: 2.5rem;
-    }
-
     #roomContainerContents {
         justify-content: center;
     }
 
-    #seperator {
-        border: 0;
-        height: 2px;
-        background: #000;
-    }
 </style>

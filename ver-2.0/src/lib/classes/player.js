@@ -66,7 +66,7 @@ export class Player {
                     this.#buildings[building.kr] += 1;
                     this.#tech[building.track] += building.floor;
                     if (building.track === 'hydrogen') {
-                        this.#hydrogenLabCnt += 1;
+                        this.#hydrogenLabCnt += building.floor;
                     }
                 } else if (building instanceof Factory) {
                     this.#buildingList.push(building);

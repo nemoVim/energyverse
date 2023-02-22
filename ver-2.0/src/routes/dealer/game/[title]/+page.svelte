@@ -119,8 +119,8 @@
         let team = prompt("팀 번호를 입력해 주세요. (1~6)");
         if (!team) return;
         if (isNaN(Number(team))) return;
-        team += 1;
-        if (team < 0 || team > 6) return;
+        team = Number(team) + 1;
+        if (team < 1 || team > 7) return;
 
         const value = prompt("지정할 에너지량을 입력해 주세요.");
         if (!value) return;
