@@ -23,6 +23,7 @@
         loading = true;
 
         game.previousTurn();
+
         if (game.round === 0) {
             game = new Game(createGameObj(game.title));
         } else {
@@ -31,9 +32,12 @@
                 round: game.round,
                 turn: game.turn,
             });
-            console.log(resMsg);
             game = new Game(resMsg);
         }
+
+        game.playerList[game.turn].time = new Date().getTime();
+
+        const _resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
 
         loading = false;
     }
@@ -41,23 +45,11 @@
     async function nextTurn() {
         loading = true;
 
-        console.log(game);
-        // game.nextTurn();
-
-        // game.turn = Game.rotate(game.turn, 0, 6, -1);
-        // if (Game.rotate(game.turn, 0, 6, 1) === game.first) {
-        //     game.round -= 1;
-        // }
-
         const resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
-        const _resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
-
-        // game.turn = Game.rotate(game.turn, 0, 6, 1);
-        // if (game.turn === game.first) {
-        //     game.round += 1;
-        // }
 
         game.nextTurn();
+        
+        const _resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
 
         game = new Game(game.gameObj);
 
@@ -123,6 +115,25 @@
         clickedUnit = event.detail.unit;
     }
 
+    async function changeEnergy() {
+        let team = prompt("팀 번호를 입력해 주세요. (1~6)");
+        if (!team) return;
+        if (isNaN(Number(team))) return;
+        team += 1;
+        if (team < 0 || team > 6) return;
+
+        const value = prompt("지정할 에너지량을 입력해 주세요.");
+        if (!value) return;
+        if (isNaN(Number(value))) return;
+
+        game.playerList[team].energy = value;
+
+        loading = true;
+        const resMsg = await postReq(fetch, '/api/game/save', game.gameObj);
+        loading = false;
+
+    }
+
     async function refreshGame(event) {
         loading = true;
         game = new Game(event.detail.game);
@@ -142,13 +153,14 @@
 <div id="infoContainer">
     <div>
         <p>
-            ROOM_{game.title} / {game.temp.toFixed(1)} ℃ ({game.temp.toFixed(
-                1
-            ) + 15} ℃)
+            ROOM_{game.title} / {game.temp.toFixed(1)} ℃ ({Number(
+                game.temp.toFixed(1)) + 15} ℃)
         </p>
         <hr />
         <p>Round {game.round} / {game.title}{game.turn + 1} Turn</p>
     </div>
+
+    <button on:click={changeEnergy}>E 변경</button>
 
     <button on:click={previousTurn}>이전 턴</button>
     <button on:click={nextTurn}>다음 턴</button>
