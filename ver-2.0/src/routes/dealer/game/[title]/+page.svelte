@@ -83,13 +83,12 @@
         loading = false;
     }
 
-    let clickedUnit;
-
-    let clickedBuildObj;
-    let clickedProduceEn;
+    let clickedUnit = null;
+    let clickedBuildObj = null;
+    let clickedProduceObj = null;
 
     function clickedBuild(event) {
-        clickedProduceEn = null;
+        clickedProduceObj = null;
         clickedUnit = null;
         clickedBuildObj = {
             buildEn: event.detail.buildEn,
@@ -100,12 +99,14 @@
     function clickedProduce(event) {
         clickedBuildObj = null;
         clickedUnit = null;
-        clickedProduceEn = event.detail.produceEn;
+        clickedProduceObj = {
+            unitEn: event.detail.produceEn,
+        };
     }
 
     function clickAir(event) {
         clickedBuildObj = null;
-        clickedProduceEn = null;
+        clickedProduceObj = null;
         clickedUnit = null;
     }
 
@@ -119,8 +120,8 @@
         let team = prompt("팀 번호를 입력해 주세요. (1~6)");
         if (!team) return;
         if (isNaN(Number(team))) return;
-        team = Number(team) + 1;
-        if (team < 1 || team > 7) return;
+        team = Number(team) - 1;
+        if (team < 0 || team > 6) return;
 
         const value = prompt("지정할 에너지량을 입력해 주세요.");
         if (!value) return;
@@ -182,7 +183,7 @@
         />
         <MoveTileContainer {game} {clickedUnit} on:game={refreshGame} />
         <BulidTileContainer {game} {clickedBuildObj} on:game={refreshGame} />
-        <ProduceTileContainer {game} {clickedProduceEn} on:game={refreshGame} />
+        <ProduceTileContainer {game} {clickedProduceObj} on:game={refreshGame} />
     </div>
 </div>
 

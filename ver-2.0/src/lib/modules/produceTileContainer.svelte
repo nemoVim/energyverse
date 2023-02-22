@@ -7,9 +7,9 @@
     import { checkTech } from '$lib/classes/tech';
 
     export let game;
-    export let clickedProduceEn = null;
+    export let clickedProduceObj = null;
 
-    $: validProducePosList = makeValidProducePosList(clickedProduceEn);
+    $: validProducePosList = makeValidProducePosList(clickedProduceObj);
 
     const dispatch = createEventDispatcher();
 
@@ -19,32 +19,51 @@
         });
     }
 
-    function makeValidProducePosList(unitEn) {
-        if (unitEn === null) {
-            return [];
-        } else {
-            let posList = [unitEn];
-            const nowPlayer = game.playerList[game.turn];
-            nowPlayer.buildingList.forEach((building) => {
-                if (building.en !== 'factory') return;
+    function makeValidProducePosList(clickedProduceObj) {
+        if (clickedProduceObj === null) return [];
 
-                Tilemap.ring(building.pos, 1).forEach((pos) => {
+        const unitEn = clickedProduceObj.unitEn;
+        let posList = [unitEn];
+        const nowPlayer = game.playerList[game.turn];
+        nowPlayer.buildingList.forEach((building) => {
+            if (building.en !== 'factory') return;
 
-                    const biome = game.world.getBiome(pos);
+            Tilemap.ring(building.pos, 1).forEach((pos) => {
+                const biome = game.world.getBiome(pos);
 
-                    if (biome.en === 'fuel') return;
-            if (biome.en === 'mountain' && unitEn === 'probe' && !checkTech(nowPlayer.tech, 3)) return false;
-            if (biome.en === 'mountain' && unitEn !== 'probe' && !checkTech(nowPlayer.tech, 2)) return false;
-            if (biome.en === 'water' && unitEn === 'probe' && !checkTech(nowPlayer.tech, 5)) return false;
-            if (biome.en === 'water' && unitEn !== 'probe' && !checkTech(nowPlayer.tech, 4)) return false;
+                if (biome.en === 'fuel') return;
+                if (
+                    biome.en === 'mountain' &&
+                    unitEn === 'probe' &&
+                    !checkTech(nowPlayer.tech, 3)
+                )
+                    return false;
+                if (
+                    biome.en === 'mountain' &&
+                    unitEn !== 'probe' &&
+                    !checkTech(nowPlayer.tech, 2)
+                )
+                    return false;
+                if (
+                    biome.en === 'water' &&
+                    unitEn === 'probe' &&
+                    !checkTech(nowPlayer.tech, 5)
+                )
+                    return false;
+                if (
+                    biome.en === 'water' &&
+                    unitEn !== 'probe' &&
+                    !checkTech(nowPlayer.tech, 4)
+                )
+                    return false;
 
-                    if (game.world.getEntity(pos) !== null) return;
+                if (game.world.getEntity(pos) !== null) return;
 
-                    posList.push(pos);
-                });
+                posList.push(pos);
             });
-            return posList;
-        }
+        });
+
+        return posList;
     }
 
     function clickToProduce(unitEn, pos) {
@@ -86,6 +105,6 @@
 
     .produce > img {
         width: 2rem;
-        margin: .433rem .5rem;
+        margin: 0.433rem 0.5rem;
     }
 </style>
