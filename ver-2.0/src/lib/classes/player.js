@@ -63,7 +63,7 @@ export class Player {
             if (building.player === this.#index) {
                 if (building instanceof Lab) {
                     this.#buildingList.push(building);
-                    this.#buildings[building.kr] += 1;
+                    this.#buildings[building.kr] += building.floor;
                     this.#tech[building.track] += building.floor;
                     if (building.track === 'hydrogen') {
                         this.#hydrogenLabCnt += building.floor;
