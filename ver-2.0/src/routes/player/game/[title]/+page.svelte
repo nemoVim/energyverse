@@ -71,6 +71,8 @@
 
     export let data;
 
+    const team = data.player;
+
     let game = new Game(data.game);
 
     let limitTimeList = [120, 120, 120, 120, 120, 120];
@@ -118,6 +120,11 @@
         viewIndex = i;
     }
 
+    $: {
+        console.log(`viewIndex: ${viewIndex}`);
+        console.log(`team: ${team}`);
+    }
+
     let isChecked = false;
 
     $: nowPlayer = game.playerList[viewIndex];
@@ -146,11 +153,17 @@
 </script>
 
 <div id="firstLine">
-    <div id="titleBox" class="whiteBox">
+    <div id="titleBox" class="whiteBox" class:player={team == viewIndex} class:not-player={team != viewIndex}>
         <div id="titleContent">
             <p>{game.title}{Number(viewIndex) + 1}</p>
         </div>
     </div>
+
+    {#if team != viewIndex}
+        <div id="alertDiv" class="whiteBox">
+            <p>현재 다른 팀을 관전 중입니다!</p>
+        </div>
+    {/if}
 
     <div id="headBox" class="whiteBox">
         <div id="energyContent" class="box">
@@ -345,6 +358,26 @@
 {/each}
 
 <style>
+
+    .player {
+        background-color: rgb(202, 246, 185) !important;
+    }
+
+    .not-player {
+        background-color: rgb(255, 200, 200) !important;
+    }
+
+    #alertDiv {
+        background-color: rgb(255, 200, 200);
+        color: red;
+        align-items: center;
+    }
+
+    #alertDiv > p {
+        font-size: 1.5rem;
+        margin: 0 1rem;
+    }
+
     .hidden {
         display: none !important;
     }
